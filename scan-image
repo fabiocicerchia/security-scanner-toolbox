@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# scan-image IMAGE [--fail-on SEVERITY] [--sbom out.json] [--verify-key key.pub]
+# Opinionated pipeline: syft SBOM -> grype + trivy scans -> optional cosign verify.
+set -euo pipefail
+
+usage() { grep '^#' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+
+IMAGE="" FAIL_ON="critical" SBOM_OUT="" VERIFY_KEY=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --fail-on)    FAIL_ON="$2"; shift 2 ;;
+    --sbom)       SBOM_OUT="$2"; shift 2 ;;
+    --verify-key) VERIFY_KEY="$2"; shift 2 ;;
+    --help|-h)    usage ;;
+    -*)           echo "unknown flag: $1" >&2; usage 64 ;;
+    *)            IMAGE="$1"; shift ;;
+  esac
+done
+[[ -n "$IMAGE" ]] || usage 64
+
+if [[ -n "$VERIFY_KEY" ]]; then
+  echo "==> cosign verify"
+  cosign verify --key "$VERIFY_KEY" "$IMAGE"
+fi
+
+echo "==> syft (SBOM)"
+SBOM="${SBOM_OUT:-$(mktemp)}"
+syft -o cyclonedx-json="$SBOM" "$IMAGE" >/dev/null
+echo "SBOM written to $SBOM"
+
+echo "==> grype (from SBOM)"
+grype "sbom:$SBOM" --fail-on "$FAIL_ON"
+
+echo "==> trivy"
+trivy image --severity "${FAIL_ON^^},HIGH" --exit-code 1 "$IMAGE"
+
+echo "scan-image: PASS ($IMAGE)"
