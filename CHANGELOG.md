@@ -8,16 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-### Changed
-### Deprecated
-### Removed
-### Fixed
-### Security
 
-## [0.1.0] - YYYY-MM-DD
+- trivy, grype, syft and cosign pinned in one multi-arch image, plus
+  `scan-image`: SBOM, scan, cross-check and optional signature verification
+  in one command.
 
-### Added
-- Initial release.
-
-[Unreleased]: https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/fabiocicerchia/security-scanner-toolbox/releases/tag/v0.1.0
+Not yet released.

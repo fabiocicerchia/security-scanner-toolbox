@@ -1,14 +1,17 @@
 version: 2
 updates:
-  # Keep GitHub Actions pinned versions fresh.
+  # Keep the pinned action SHAs in the workflows fresh.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
 
-  # Uncomment and set the ecosystem for your project's dependencies.
-  # ecosystems: npm, pip, gomod, cargo, bundler, maven, composer, nuget, ...
-  # - package-ecosystem: npm
-  #   directory: /
-  #   schedule:
-  #     interval: weekly
+  # Base image in the Dockerfile.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+
+  # The scanner versions themselves are build args in the pinned-versions file,
+  # which dependabot cannot parse. Bumping them is the scheduled-rebuild job's
+  # work — a scanner with a stale vuln DB is worse than no scanner.

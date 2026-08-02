@@ -51,4 +51,4 @@ See [`versions.env`](versions.env) — consumed by the Makefile as build args.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Apache-2.0 — see [LICENSE](LICENSE).
