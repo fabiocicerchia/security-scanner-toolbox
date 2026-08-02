@@ -3,6 +3,10 @@ name: Publish Image
 # Builds and pushes the multi-arch image to GHCR whenever a GitHub Release is
 # published — by release-please or manually. Decoupled from release-please's
 # own internal state so any published release triggers it.
+#
+# The image is built once for amd64 and put through this repo's own test.sh
+# before anything is pushed. Publishing an artifact that has never been started
+# is the failure worth spending two minutes of runner time to avoid.
 
 on:
   release:
@@ -12,6 +16,9 @@ permissions:
   contents: read
 
 env:
+  # GHCR links a package to its repository via
+  # org.opencontainers.image.source in the Dockerfile — check that label is
+  # this repo before the first release, or the package attaches elsewhere.
   IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
@@ -41,6 +48,39 @@ jobs:
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: echo "version=${TAG_NAME#v}" >> "$GITHUB_OUTPUT"
 
+      # The four scanner versions are build args, and the Makefile is what
+      # normally supplies them. A plain `docker build` silently falls back to
+      # the Dockerfile's ARG defaults — publishing an image pinned to
+      # different versions than the repo says it ships.
+      - name: Load pinned scanner versions as build args
+        id: pins
+        run: |
+          {
+            echo 'args<<EOF'
+            grep -E '^[A-Z_]+=' versions.env
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          echo "--- publishing with:"
+          grep -E '^[A-Z_]+=' versions.env
+
+      # Single-arch, loaded into the local daemon, so test.sh can actually run
+      # it. buildx caches the layers, so the multi-arch build below reuses this
+      # work for amd64 rather than repeating it.
+      - name: Build amd64 for testing
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          push: false
+          tags: ${{ env.IMAGE }}:ci-test
+          build-args: ${{ steps.pins.outputs.args }}
+
+      # All four tools respond, and syft produces a real SBOM for a live image.
+      # Needs network for the scanner databases.
+      - name: Smoke test
+        run: ./test.sh "${{ env.IMAGE }}:ci-test"
+
       - name: Build and push (multi-arch)
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
@@ -50,3 +90,4 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:${{ steps.ver.outputs.version }}
             ${{ env.IMAGE }}:latest
+          build-args: ${{ steps.pins.outputs.args }}
