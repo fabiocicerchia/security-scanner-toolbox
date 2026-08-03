@@ -5,7 +5,7 @@ ARG GRYPE_VERSION=0.95.0
 ARG SYFT_VERSION=1.28.0
 ARG COSIGN_VERSION=2.5.3
 
-FROM alpine:3.22 AS fetch
+FROM alpine:3.24 AS fetch
 ARG TRIVY_VERSION
 ARG GRYPE_VERSION
 ARG SYFT_VERSION
@@ -23,7 +23,7 @@ RUN curl -fsSLo /usr/local/bin/cosign \
       "https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-${TARGETARCH}" \
  && chmod 0755 /usr/local/bin/cosign
 
-FROM alpine:3.22
+FROM alpine:3.24
 LABEL org.opencontainers.image.title="security-scanner-toolbox" \
       org.opencontainers.image.description="trivy + grype + syft + cosign, pinned, for supply-chain CI steps" \
       org.opencontainers.image.licenses="Apache-2.0" \
