@@ -1,0 +1,37 @@
+# Scan a built image and keep the SBOM, as a required check.
+#
+# Copy to .github/workflows/scan.yml in the repo being scanned.
+name: scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    # Pinned tag, not :latest — a compliance gate whose contents change
+    # between runs is not a gate.
+    container: fabiocicerchia/security-scanner-toolbox:0.1.0
+    steps:
+      - uses: actions/checkout@v4
+
+      # Scanning from a registry needs no Docker socket. If you build locally
+      # instead, push first and scan the pushed tag — mounting the socket into
+      # a container running as uid 10001 is the harder path.
+      - name: scan
+        run: |
+          scan-image "${IMAGE}" --fail-on high --sbom sbom.cdx.json
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      # `always()` matters: the SBOM is most useful on the run that failed.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sbom
+          path: sbom.cdx.json

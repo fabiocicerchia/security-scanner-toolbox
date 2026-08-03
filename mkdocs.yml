@@ -1,0 +1,23 @@
+site_name: security-scanner-toolbox
+site_description: >-
+  trivy, grype, syft and cosign pinned in one multi-arch image — the whole
+  supply-chain step without four installs and four version drifts.
+repo_url: https://github.com/fabiocicerchia/security-scanner-toolbox
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle: { icon: material/weather-night, name: Dark mode }
+    - scheme: slate
+      toggle: { icon: material/weather-sunny, name: Light mode }
+
+nav:
+  - Home: README.md
+  - Getting Started: getting-started.md
+  - Architecture: architecture.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences
