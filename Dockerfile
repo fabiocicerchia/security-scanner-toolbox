@@ -30,6 +30,7 @@ LABEL org.opencontainers.image.title="security-scanner-toolbox" \
       org.opencontainers.image.source="https://github.com/fabiocicerchia/security-scanner-toolbox"
 RUN apk add --no-cache bash ca-certificates git \
  && adduser -D -u 10001 scanner
+COPY NOTICE /NOTICE
 COPY --from=fetch /usr/local/bin/trivy /usr/local/bin/grype /usr/local/bin/syft /usr/local/bin/cosign /usr/local/bin/
 COPY scan-image /usr/local/bin/scan-image
 USER 10001
