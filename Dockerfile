@@ -26,7 +26,7 @@ RUN curl -fsSLo /usr/local/bin/cosign \
 FROM alpine:3.24
 LABEL org.opencontainers.image.title="security-scanner-toolbox" \
       org.opencontainers.image.description="trivy + grype + syft + cosign, pinned, for supply-chain CI steps" \
-      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.licenses="Apache-2.0 AND GPL-2.0-or-later AND GPL-3.0-or-later" \
       org.opencontainers.image.source="https://github.com/fabiocicerchia/security-scanner-toolbox"
 RUN apk add --no-cache bash ca-certificates git \
  && adduser -D -u 10001 scanner
