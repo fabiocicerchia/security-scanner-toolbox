@@ -3,3 +3,57 @@ Copyright 2026 Fabio Cicerchia
 
 This product includes software developed by
 Fabio Cicerchia (https://github.com/fabiocicerchia).
+
+The published container image redistributes the following third-party
+binaries verbatim, each under its own license:
+
+  trivy 0.64.1   Apache-2.0  https://github.com/aquasecurity/trivy
+  grype 0.95.0   Apache-2.0  https://github.com/anchore/grype
+  syft 1.28.0    Apache-2.0  https://github.com/anchore/syft
+  cosign 2.5.3   Apache-2.0  https://github.com/sigstore/cosign
+
+Of those four, only Trivy ships an upstream NOTICE file, so it is the only
+one whose contents Apache-2.0 section 4(d) requires be reproduced; it is
+below verbatim. For all four, section 4(a) requires that recipients of the
+binary also receive a copy of the Apache License 2.0, available at
+https://www.apache.org/licenses/LICENSE-2.0.
+
+--------------------------------------------------------------------
+Trivy — upstream NOTICE, reproduced verbatim:
+
+  Trivy
+  Copyright 2019-2020 Aqua Security Software Ltd.
+
+  This product includes software developed by Aqua Security
+  (https://aquasec.com).
+
+Licensed under the Apache License, Version 2.0.
+https://github.com/aquasecurity/trivy/blob/main/LICENSE
+
+Grype
+Copyright 2020-2026 Anchore, Inc.
+Licensed under the Apache License, Version 2.0.
+https://github.com/anchore/grype/blob/main/LICENSE
+
+Syft
+Copyright 2020-2026 Anchore, Inc.
+Licensed under the Apache License, Version 2.0.
+https://github.com/anchore/syft/blob/main/LICENSE
+
+Cosign
+Copyright 2021-2026 The Sigstore Authors.
+Licensed under the Apache License, Version 2.0.
+https://github.com/sigstore/cosign/blob/main/LICENSE
+--------------------------------------------------------------------
+
+The base image is Alpine Linux; its packages carry their own licenses.
+Notable copyleft components installed at runtime:
+
+  bash           GPL-3.0-or-later  https://git.savannah.gnu.org/cgit/bash.git
+  git            GPL-2.0-only      https://git-scm.com/
+  busybox        GPL-2.0-only      https://busybox.net/
+  musl           MIT               https://musl.libc.org/
+
+Source for the Alpine packages above is published by Alpine Linux at
+https://gitlab.alpinelinux.org/alpine/aports — the exact versions can be
+resolved with `apk info -a <package>` inside the image.
