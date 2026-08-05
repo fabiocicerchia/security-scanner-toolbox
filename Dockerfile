@@ -1,6 +1,6 @@
 # security-scanner-toolbox — trivy + grype + syft + cosign, pinned and
 # multi-arch. One image for the whole scan/attest step in CI.
-ARG TRIVY_VERSION=0.64.1
+ARG TRIVY_VERSION=0.73.0
 ARG GRYPE_VERSION=0.95.0
 ARG SYFT_VERSION=1.28.0
 ARG COSIGN_VERSION=2.5.3
