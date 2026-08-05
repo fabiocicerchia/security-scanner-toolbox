@@ -1,0 +1,5 @@
+# Domain vocabulary the typos dictionary mistakes for misspellings.
+
+[default.extend-words]
+# "criticals" — how scanner output counts CRITICAL-severity findings.
+criticals = "criticals"
