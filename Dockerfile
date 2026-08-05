@@ -11,6 +11,10 @@ ARG GRYPE_VERSION
 ARG SYFT_VERSION
 ARG COSIGN_VERSION
 ARG TARGETARCH=amd64
+# Every fetch below pipes curl into tar. Without pipefail the RUN succeeds on a
+# failed download — tar happily unpacks nothing and the image ships without the
+# tool. That is exactly how the trivy 404 stayed invisible until a build broke.
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN apk add --no-cache curl ca-certificates
 RUN ARCH="$([ "$TARGETARCH" = "arm64" ] && echo ARM64 || echo 64bit)" \
  && curl -fsSL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz" \
