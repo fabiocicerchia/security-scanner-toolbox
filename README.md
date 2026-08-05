@@ -1,5 +1,11 @@
 # security-scanner-toolbox
 
+[![CI](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/code-quality.yml/badge.svg)](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/code-quality.yml)
+[![Security](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/security.yml/badge.svg)](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/security.yml)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/fabiocicerchia/security-scanner-toolbox/badge)](https://securityscorecards.dev/viewer/?uri=github.com/fabiocicerchia/security-scanner-toolbox)
+
 **trivy + grype + syft + cosign**, pinned and multi-arch, in one image — the
 entire supply-chain step of a CI pipeline without four separate installs, four
 caches, and four version drifts. Includes `scan-image`, an opinionated
@@ -7,6 +13,13 @@ SBOM → scan → verify pipeline.
 
 The commitment of this image is *cadence*: scanners with stale DBs are worse
 than no scanners, so releases are rebuilt on a schedule (see roadmap).
+
+## Install
+
+```sh
+make build                       # builds fabiocicerchia/security-scanner-toolbox:0.1.0 locally
+docker pull fabiocicerchia/security-scanner-toolbox:0.1.0
+```
 
 ## Usage
 
@@ -38,16 +51,13 @@ steps:
 
 See [`versions.env`](versions.env) — consumed by the Makefile as build args.
 
-## Status & roadmap
-
-- [x] Pinned multi-arch build, smoke tests, `scan-image` pipeline
-- [ ] Scheduled weekly rebuild (fresh vuln DBs baked in for air-gapped use)
-- [ ] `-db` variant with pre-downloaded trivy/grype databases
-- [ ] SLSA provenance + cosign-signed releases of this image itself
-
 ## Development
 
 `make build` / `make lint` / `make test` / `make release`.
+
+## Documentation
+
+Full docs live in [`docs/`](docs/). Runnable examples live in [`examples/`](examples/).
 
 ## License
 
