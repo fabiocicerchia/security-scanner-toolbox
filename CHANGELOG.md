@@ -5,6 +5,13 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.0.0...v1.0.1) (2026-08-06)
+
+
+### Bug Fixes
+
+* publish the image from the release job so it actually runs ([e40df4d](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/e40df4db04b4c2971da5850d578fc86aefc438d5))
+
 ## 1.0.0 (2026-08-06)
 
 
