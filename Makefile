@@ -1,5 +1,5 @@
-IMAGE     ?= fabiocicerchia/security-scanner-toolbox
-VERSION   ?= 0.1.0
+IMAGE     ?= ghcr.io/fabiocicerchia/security-scanner-toolbox
+VERSION   ?= 1.0.0
 PLATFORMS ?= linux/amd64,linux/arm64
 BUILD_ARGS = $(shell sed -n 's/^\([A-Z_]*\)=\(.*\)/--build-arg \1=\2/p' versions.env)
 

@@ -17,8 +17,8 @@ than no scanners, so releases are rebuilt on a schedule (see roadmap).
 ## Install
 
 ```sh
-make build                       # builds fabiocicerchia/security-scanner-toolbox:0.1.0 locally
-docker pull fabiocicerchia/security-scanner-toolbox:0.1.0
+make build                       # builds ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0 locally
+docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0
 ```
 
 ## Usage
@@ -28,21 +28,21 @@ trivy, optionally verify the signature first):
 
 ```sh
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-  fabiocicerchia/security-scanner-toolbox \
+  ghcr.io/fabiocicerchia/security-scanner-toolbox \
   'scan-image my-registry/app:1.2.3 --fail-on high --sbom /work/sbom.json'
 ```
 
 Individual tools (the entrypoint is `bash -c`):
 
 ```sh
-docker run --rm fabiocicerchia/security-scanner-toolbox 'trivy fs /work'
-docker run --rm fabiocicerchia/security-scanner-toolbox 'cosign sign-blob ...'
+docker run --rm ghcr.io/fabiocicerchia/security-scanner-toolbox 'trivy fs /work'
+docker run --rm ghcr.io/fabiocicerchia/security-scanner-toolbox 'cosign sign-blob ...'
 ```
 
 GitHub Actions:
 
 ```yaml
-container: fabiocicerchia/security-scanner-toolbox:0.1.0
+container: ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0
 steps:
   - run: scan-image ${{ env.IMAGE }} --fail-on critical
 ```
