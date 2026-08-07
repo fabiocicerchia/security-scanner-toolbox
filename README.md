@@ -5,6 +5,7 @@
 [![Security](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/security.yml/badge.svg)](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/security.yml)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/fabiocicerchia/security-scanner-toolbox/badge)](https://securityscorecards.dev/viewer/?uri=github.com/fabiocicerchia/security-scanner-toolbox)
+[![CI carbon](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/fabiocicerchia/security-scanner-toolbox/gh-pages/badge.json)](.github/workflows/carbon-badge.yml)
 
 **trivy + grype + syft + cosign**, pinned and multi-arch, in one image — the
 entire supply-chain step of a CI pipeline without four separate installs, four
