@@ -1,0 +1,40 @@
+#!/bin/sh
+# verify-download ARTIFACT CHECKSUMS_FILE EXPECTED_CHECKSUMS_SHA256
+#
+# Verifies a downloaded release artifact in two steps, both failing closed:
+#
+#   1. the release's checksums file must match the SHA-256 pinned in the build
+#      args — otherwise the file itself is just another unverified download;
+#   2. the artifact must match its own line in that file.
+#
+# Pinning the checksums file rather than each per-arch binary keeps one constant
+# per tool while still covering every architecture.
+#
+# awk exits non-zero when the artifact has no line in the checksums file, so a
+# renamed or missing entry fails the build instead of handing sha256sum an empty
+# stream, which busybox treats as success.
+set -eu
+
+artifact="$1"
+sums="$2"
+expected="$3"
+
+if [ ! -s "$artifact" ]; then
+    echo "verify-download: $artifact is missing or empty" >&2
+    exit 1
+fi
+
+echo "${expected}  ${sums}" | sha256sum -c - >/dev/null || {
+    echo "verify-download: $sums does not match its pinned SHA-256" >&2
+    echo "  expected ${expected}" >&2
+    echo "  got      $(sha256sum "$sums" | cut -d' ' -f1)" >&2
+    exit 1
+}
+
+awk -v f="$artifact" '$2 == f { print; found = 1 } END { exit !found }' "$sums" \
+    | sha256sum -c - >/dev/null || {
+    echo "verify-download: $artifact failed verification against $sums" >&2
+    exit 1
+}
+
+echo "verify-download: $artifact verified against $sums"
