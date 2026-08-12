@@ -21,7 +21,7 @@ ARG SYFT_CHECKSUMS_SHA256=4cf5750a220be81408b45ed26b35228b94b353ad176a815ac8e986
 # VERSION-BUMP
 ARG COSIGN_CHECKSUMS_SHA256=0b9d811bcc2e93d0eb7a61e515550b1948887718953cdcc6e518bca63fc10967
 
-FROM alpine:3.24 AS fetch
+FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS fetch
 ARG TRIVY_VERSION
 ARG GRYPE_VERSION
 ARG SYFT_VERSION
@@ -82,7 +82,7 @@ RUN set -eu; \
     install -m 0755 "$f" /usr/local/bin/cosign; \
     rm -f "$f" sums.txt
 
-FROM alpine:3.24
+FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
 LABEL org.opencontainers.image.title="security-scanner-toolbox" \
       org.opencontainers.image.description="trivy + grype + syft + cosign, pinned, for supply-chain CI steps" \
       org.opencontainers.image.licenses="Apache-2.0 AND GPL-2.0-or-later AND GPL-3.0-or-later" \
