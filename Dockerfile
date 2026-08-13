@@ -36,7 +36,19 @@ ARG TARGETARCH=amd64
 # 404 stayed invisible until a build broke. It now also makes the `awk | sha256sum`
 # verification below fail closed when awk finds no line for the artifact.
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN apk add --no-cache curl ca-certificates
+# Eight release downloads follow, and any one of them dropping mid-transfer
+# fails the whole build — CI hit exactly that (curl 56, "failure in receiving
+# network data", on the grype tarball). curl reads ~/.curlrc on every
+# invocation, so the retry policy sits here once instead of on eight command
+# lines where it would drift. Retries are safe: every artifact is checksum-pinned
+# below, so a repeated fetch still has to match its pin.
+RUN apk add --no-cache curl ca-certificates \
+ && printf '%s\n' \
+      'retry = 5' \
+      'retry-all-errors' \
+      'retry-delay = 2' \
+      'retry-max-time = 120' \
+      'connect-timeout = 15' > /root/.curlrc
 
 # verify <artifact> <checksums-file> <expected-sha256-of-checksums-file>
 # Two steps, both fail closed: the checksums file must match its pin, then the
