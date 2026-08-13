@@ -21,7 +21,7 @@ ARG SYFT_CHECKSUMS_SHA256=4cf5750a220be81408b45ed26b35228b94b353ad176a815ac8e986
 # VERSION-BUMP
 ARG COSIGN_CHECKSUMS_SHA256=0b9d811bcc2e93d0eb7a61e515550b1948887718953cdcc6e518bca63fc10967
 
-FROM alpine:3.24 AS fetch
+FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS fetch
 ARG TRIVY_VERSION
 ARG GRYPE_VERSION
 ARG SYFT_VERSION
@@ -36,7 +36,19 @@ ARG TARGETARCH=amd64
 # 404 stayed invisible until a build broke. It now also makes the `awk | sha256sum`
 # verification below fail closed when awk finds no line for the artifact.
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN apk add --no-cache curl ca-certificates
+# Eight release downloads follow, and any one of them dropping mid-transfer
+# fails the whole build — CI hit exactly that (curl 56, "failure in receiving
+# network data", on the grype tarball). curl reads ~/.curlrc on every
+# invocation, so the retry policy sits here once instead of on eight command
+# lines where it would drift. Retries are safe: every artifact is checksum-pinned
+# below, so a repeated fetch still has to match its pin.
+RUN apk add --no-cache curl ca-certificates \
+ && printf '%s\n' \
+      'retry = 5' \
+      'retry-all-errors' \
+      'retry-delay = 2' \
+      'retry-max-time = 120' \
+      'connect-timeout = 15' > /root/.curlrc
 
 # verify <artifact> <checksums-file> <expected-sha256-of-checksums-file>
 # Two steps, both fail closed: the checksums file must match its pin, then the
@@ -82,7 +94,7 @@ RUN set -eu; \
     install -m 0755 "$f" /usr/local/bin/cosign; \
     rm -f "$f" sums.txt
 
-FROM alpine:3.24
+FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
 LABEL org.opencontainers.image.title="security-scanner-toolbox" \
       org.opencontainers.image.description="trivy + grype + syft + cosign, pinned, for supply-chain CI steps" \
       org.opencontainers.image.licenses="Apache-2.0 AND GPL-2.0-or-later AND GPL-3.0-or-later" \
