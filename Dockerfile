@@ -57,6 +57,7 @@ RUN apk add --no-cache curl ca-certificates \
 # silently on an empty check.
 COPY verify-download /usr/local/bin/verify-download
 
+# hadolint ignore=DL3003  # `cd` is scoped to this RUN; a WORKDIR would leak into later layers
 RUN set -eu; \
     ARCH="$([ "$TARGETARCH" = "arm64" ] && echo ARM64 || echo 64bit)"; \
     f="trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz"; \
@@ -67,6 +68,7 @@ RUN set -eu; \
     tar -xz -C /usr/local/bin -f "$f" trivy; \
     rm -f "$f" sums.txt
 
+# hadolint ignore=DL3003  # `cd` is scoped to this RUN; a WORKDIR would leak into later layers
 RUN set -eu; \
     f="grype_${GRYPE_VERSION}_linux_${TARGETARCH}.tar.gz"; \
     cd /tmp; \
@@ -76,6 +78,7 @@ RUN set -eu; \
     tar -xz -C /usr/local/bin -f "$f" grype; \
     rm -f "$f" sums.txt
 
+# hadolint ignore=DL3003  # `cd` is scoped to this RUN; a WORKDIR would leak into later layers
 RUN set -eu; \
     f="syft_${SYFT_VERSION}_linux_${TARGETARCH}.tar.gz"; \
     cd /tmp; \
@@ -85,6 +88,7 @@ RUN set -eu; \
     tar -xz -C /usr/local/bin -f "$f" syft; \
     rm -f "$f" sums.txt
 
+# hadolint ignore=DL3003  # `cd` is scoped to this RUN; a WORKDIR would leak into later layers
 RUN set -eu; \
     f="cosign-linux-${TARGETARCH}"; \
     cd /tmp; \
