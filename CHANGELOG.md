@@ -5,6 +5,13 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.0.3...v1.1.0) (2026-08-25)
+
+
+### Features
+
+* **docs:** build the docs site in Actions and drop Read the Docs ([#35](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/35)) ([bd5308c](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/bd5308ca639c7ec4ec60696bd0eecadf2a9bc59c))
+
 ## [1.0.3](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.0.2...v1.0.3) (2026-08-13)
 
 
