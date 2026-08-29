@@ -5,6 +5,13 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.1.0...v1.1.1) (2026-08-29)
+
+
+### Bug Fixes
+
+* unblock quality and clear the Scorecard pinned-dependencies finding ([#37](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/37)) ([04bb501](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/04bb501783829b0ad92be76278aeef7023e8fd4b))
+
 ## [1.1.0](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.0.3...v1.1.0) (2026-08-25)
 
 
