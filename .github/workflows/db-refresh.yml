@@ -60,12 +60,16 @@ jobs:
           set -euo pipefail
           digest="$(docker buildx imagetools inspect "${IMAGE}:${BASE_TAG}" \
             --format '{{ .Manifest.Digest }}')"
-          echo "ref=${IMAGE}@${digest}" >> "$GITHUB_OUTPUT"
-          echo "built=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
-          # The version tag the refreshed image should also carry, read from
-          # the base image rather than from the checkout, so a rebuild of an
-          # older base does not get labelled with today's version.
-          echo "version=$(cat version.txt)" >> "$GITHUB_OUTPUT"
+          # One redirect for the group rather than four: the file is appended
+          # to by every step, so a partial write on a failure mid-block is the
+          # failure mode worth avoiding. `version` is read from the base image
+          # rather than from the checkout, so a rebuild of an older base does
+          # not get labelled with today's version.
+          {
+            echo "ref=${IMAGE}@${digest}"
+            echo "built=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "version=$(cat version.txt)"
+          } >> "$GITHUB_OUTPUT"
           echo "building on ${IMAGE}@${digest}"
 
       # Single-arch first so the offline test can actually run it. buildx
