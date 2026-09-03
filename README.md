@@ -13,14 +13,50 @@ caches, and four version drifts. Includes `scan-image`, an opinionated
 SBOM → scan → verify pipeline.
 
 The commitment of this image is *cadence*: scanners with stale DBs are worse
-than no scanners, so releases are rebuilt on a schedule (see roadmap).
+than no scanners, so the database-bundled tags are rebuilt every Monday.
 
 ## Install
 
 ```sh
 make build                       # builds ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0 locally
 docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0
+docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0-db   # databases baked in
 ```
+
+### Two tags
+
+| Tag | Databases | For |
+| --- | --- | --- |
+| `:1.0.0`, `:latest` | fetched at scan time | ordinary CI with a network |
+| `:1.0.0-db`, `:latest-db` | baked in, refreshed weekly | air-gapped, or cold-start-sensitive CI |
+
+The `-db` image is built **from the published base image by digest**, so it is
+that exact release plus data — the tools cannot drift between the two. It scans
+with `--network none`, which is proved in CI on every rebuild by requiring real
+CVEs to come back; an image that scanned clean offline would be the silent
+failure the whole tag exists to prevent.
+
+### Verify it
+
+This image ships cosign to check other people's artifacts, so it signs its own.
+Every tag is cosign-signed keylessly and carries SLSA build provenance:
+
+```sh
+IMAGE=ghcr.io/fabiocicerchia/security-scanner-toolbox
+DIGEST=$(docker buildx imagetools inspect "$IMAGE:latest" --format '{{ .Manifest.Digest }}')
+
+cosign verify \
+  --certificate-identity-regexp \
+    '^https://github.com/fabiocicerchia/security-scanner-toolbox/\.github/workflows/' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+  "$IMAGE@$DIGEST"
+```
+
+No key to fetch or trust: the signature is bound to an OIDC identity — this
+workflow, in this repository, at the ref that ran — and pinning that identity is
+the point. A signature that is merely *valid* only says somebody signed it. See
+[docs/getting-started.md](docs/getting-started.md#verify-this-image) for the
+provenance command too.
 
 ## Usage
 

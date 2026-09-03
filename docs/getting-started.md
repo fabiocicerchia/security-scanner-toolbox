@@ -72,6 +72,95 @@ docker run --rm -v "$PWD:/work" fabiocicerchia/security-scanner-toolbox \
 provenance afterwards answers the questions in the wrong order — a clean scan
 of the wrong artifact is not a clean scan.
 
+## Verify *this* image
+
+The same argument applies to the scanner. Every published tag is cosign-signed
+keylessly and carries SLSA build provenance:
+
+```sh
+IMAGE=ghcr.io/fabiocicerchia/security-scanner-toolbox
+
+# Resolve the tag to a digest first. A signature is attached to bytes, not to a
+# name, and a tag can move.
+DIGEST=$(docker buildx imagetools inspect "$IMAGE:latest" \
+  --format '{{ .Manifest.Digest }}')
+
+cosign verify \
+  --certificate-identity-regexp \
+    '^https://github.com/fabiocicerchia/security-scanner-toolbox/\.github/workflows/' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+  "$IMAGE@$DIGEST"
+```
+
+And the provenance — what built it, from which commit:
+
+```sh
+cosign verify-attestation --type slsaprovenance \
+  --certificate-identity-regexp \
+    '^https://github.com/fabiocicerchia/security-scanner-toolbox/\.github/workflows/' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+  "$IMAGE@$DIGEST" | jq -r '.payload | @base64d | fromjson | .predicate.buildDefinition'
+```
+
+There is no public key to fetch or trust. Keyless signing binds the signature to
+an OIDC identity — the workflow file, in this repository, at the ref that ran —
+and that identity is what the two flags above assert. Pinning the identity
+matters: a signature that is merely *valid* only says someone signed it.
+
+Both commands run in `publish.yml` against the digest it just pushed, so a
+signing path that quietly stops working fails the release rather than the docs.
+
+## Offline scanning: the `-db` tag
+
+The default image fetches vulnerability databases at scan time, which is a
+non-starter on an air-gapped runner and slow everywhere else. The `-db` tags
+ship them baked in:
+
+```sh
+docker run --rm --network none -v "$PWD:/work" \
+  ghcr.io/fabiocicerchia/security-scanner-toolbox:latest-db \
+  'trivy image --input /work/app.tar'
+```
+
+Same tools, same pins — the `-db` image is built *from the published base image
+by digest*, so it is that exact release plus data, not a parallel build that
+could drift.
+
+What is in it, without running a scan:
+
+```sh
+docker run --rm --network none \
+  ghcr.io/fabiocicerchia/security-scanner-toolbox:latest-db \
+  'cat /opt/scanner-db/VERSIONS'
+```
+
+```
+image_built=2026-09-01T03:20:11Z
+trivy=0.73.0
+grype=0.95.0
+trivy_db=2026-09-01T02:11:44Z
+grype_db=2026-08-31T22:04:00Z
+```
+
+The databases are also the reason this tag is much larger than the base image.
+The current sizes are reported in the job summary of the latest
+[Refresh bundled databases](../../actions/workflows/db-refresh.yml) run, rather
+than written here where they would go stale the first time a feed grows.
+
+### It ages
+
+A bundled database is a snapshot. `latest-db` is rebuilt every Monday — only
+the databases, never the tool pins — so a weekly `docker pull` keeps it fresh.
+If you mirror it into an air-gapped environment, mirror it on a schedule too: a
+scanner running on a six-month-old feed reports clean and is believed, which is
+worse than having no scanner at all.
+
+The rebuild fails rather than publishing a stale-database image. `Dockerfile.db`
+checks both database files exist after the download, and CI then runs the whole
+scan under `--network none` and requires real CVEs to come back — an image that
+scanned clean offline would be exactly the silent failure the schedule exists to
+prevent.
+
 ## In a pipeline
 
 ```yaml

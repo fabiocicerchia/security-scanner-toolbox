@@ -1,0 +1,82 @@
+# security-scanner-toolbox:<version>-db — the same image, with the trivy and
+# grype vulnerability databases baked in so a scan needs no network.
+#
+# This layers on the published base tag rather than being a stage inside
+# Dockerfile, for two reasons:
+#
+#   * Tool versions cannot drift. The -db image is the base image plus data —
+#     the same trivy, grype, syft and cosign binaries, by construction, not by
+#     two pin lists agreeing. The weekly rebuild refreshes the databases and
+#     provably nothing else, which is what makes "only the DBs refresh" true.
+#   * A stage would silently become the default. `docker build .` builds the
+#     last stage, so a `db` stage on the end of Dockerfile would hand anyone
+#     running the plain build command a several-hundred-megabyte image they did
+#     not ask for.
+ARG BASE_IMAGE=ghcr.io/fabiocicerchia/security-scanner-toolbox:latest
+FROM ${BASE_IMAGE}
+
+# The base image sets this too, but SHELL does not carry across a Dockerfile
+# boundary as far as hadolint is concerned — and the version probes below are
+# pipelines whose first stage failing must not read as an empty version.
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+
+# Numeric, like the 10001 restored at the end: a name has to be resolvable in
+# the image's own passwd file for the daemon to map it.
+USER 0
+
+# Where each scanner looks when it is not told otherwise. Setting them in the
+# image means the download here and the scan later agree — including when the
+# caller mounts a different workdir or runs the tools by hand.
+ENV SCANNER_DB_DIR=/opt/scanner-db \
+    TRIVY_CACHE_DIR=/opt/scanner-db/trivy \
+    GRYPE_DB_CACHE_DIR=/opt/scanner-db/grype \
+    GRYPE_DB_AUTO_UPDATE=false \
+    TRIVY_SKIP_DB_UPDATE=true \
+    TRIVY_SKIP_JAVA_DB_UPDATE=true
+
+# A failed fetch has to fail the build. The entire point of this tag is that the
+# database is present, and an image that shipped without one would scan clean
+# and report nothing — the worst failure a security scanner has. `set -eu` plus
+# the explicit existence checks below give that; neither scanner exits non-zero
+# on every partial-download path on its own.
+RUN set -eu; \
+    mkdir -p "$TRIVY_CACHE_DIR" "$GRYPE_DB_CACHE_DIR"; \
+    TRIVY_SKIP_DB_UPDATE=false trivy image --download-db-only; \
+    TRIVY_SKIP_JAVA_DB_UPDATE=false trivy image --download-java-db-only; \
+    GRYPE_DB_AUTO_UPDATE=true grype db update; \
+    test -s "$TRIVY_CACHE_DIR/db/trivy.db" \
+      || { echo "FATAL: trivy DB absent after download" >&2; exit 1; }; \
+    test -n "$(find "$GRYPE_DB_CACHE_DIR" -name 'vulnerability.db' -print -quit)" \
+      || { echo "FATAL: grype DB absent after download" >&2; exit 1; }; \
+    chown -R 10001:10001 "$SCANNER_DB_DIR"
+
+# What is actually in here, readable without running a scan. The build date and
+# the two database timestamps are the only things that differ between two builds
+# of the same tag, so they are the only honest way to tell them apart.
+#
+# Each probe ends in `|| true`: with pipefail in force, a scanner that cannot
+# report its version — or a `head -1` that closes the pipe early — would
+# otherwise abort the build. An unknown version here is a blank field, not a
+# reason to throw away a database download that already succeeded.
+ARG BUILD_DATE=unknown
+RUN set -eu; \
+    { \
+      echo "image_built=${BUILD_DATE}"; \
+      echo "trivy=$(trivy --version --format json 2>/dev/null | sed -n 's/.*"Version": *"\([^"]*\)".*/\1/p' | head -1 || true)"; \
+      echo "grype=$(grype version -o json 2>/dev/null | sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' | head -1 || true)"; \
+      echo "trivy_db=$(trivy --version --format json 2>/dev/null | tr -d ' \n' | sed -n 's/.*"UpdatedAt":"\([^"]*\)".*/\1/p' | head -1 || true)"; \
+      echo "grype_db=$(grype db status 2>/dev/null | sed -n 's/^[Bb]uilt: *//p' | head -1 || true)"; \
+    } > "$SCANNER_DB_DIR/VERSIONS"; \
+    chown 10001:10001 "$SCANNER_DB_DIR/VERSIONS"; \
+    cat "$SCANNER_DB_DIR/VERSIONS"
+
+# Labels the registry can show without a pull of the whole thing.
+LABEL org.opencontainers.image.title="security-scanner-toolbox (databases bundled)" \
+      org.opencontainers.image.description="trivy + grype + syft + cosign with vulnerability databases baked in, for air-gapped scanning" \
+      org.opencontainers.image.source="https://github.com/fabiocicerchia/security-scanner-toolbox" \
+      org.opencontainers.image.licenses="Apache-2.0 AND GPL-2.0-or-later AND GPL-3.0-or-later" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      io.github.fabiocicerchia.scanner-db.bundled="true"
+
+USER 10001
+WORKDIR /work
