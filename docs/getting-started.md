@@ -144,7 +144,7 @@ grype_db=2026-08-31T22:04:00Z
 
 The databases are also the reason this tag is much larger than the base image.
 The current sizes are reported in the job summary of the latest
-[Refresh bundled databases](../../actions/workflows/db-refresh.yml) run, rather
+[Refresh bundled databases](https://github.com/fabiocicerchia/security-scanner-toolbox/actions/workflows/db-refresh.yml) run, rather
 than written here where they would go stale the first time a feed grows.
 
 ### It ages
