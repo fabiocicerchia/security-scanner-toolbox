@@ -12,7 +12,7 @@ BUILD_ARGS = $(shell sed -n 's/^\([A-Z_]*\)=\(.*\)/--build-arg \1=\2/p' versions
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-	  awk 'BEGIN {FS = ":.*?## "}; {printf "  %-12s %s\n", $$1, $$2}'
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  %-12s %s\n", $$1, $$2}'
 
 build: ## Build the image locally
 	docker build $(BUILD_ARGS) -t $(IMAGE):$(VERSION) .
