@@ -6,7 +6,11 @@ PLATFORMS ?= linux/amd64,linux/arm64
 BUILD_DATE ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 BUILD_ARGS = $(shell sed -n 's/^\([A-Z_]*\)=\(.*\)/--build-arg \1=\2/p' versions.env)
 
-.PHONY: build build-db lint test test-db push release release-db help
+# Every verb this repository exposes lives here; `make` on its own prints them.
+# FC-GEN-057: the same eight verbs in every repo, each either wired or a
+# declared no-op that says why. None of them exit 0 quietly.
+
+.PHONY: help setup install build test lint run format analyze push release
 
 .DEFAULT_GOAL := help
 
@@ -23,10 +27,8 @@ build-db: build ## ...and the -db variant, with the vuln databases baked in
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		-t $(IMAGE):$(VERSION)-db .
 
-lint: ## Lint the Dockerfiles and shell scripts
-	docker run --rm -i hadolint/hadolint < Dockerfile
-	docker run --rm -i hadolint/hadolint < Dockerfile.db
-	shellcheck scan-image test.sh test-offline.sh
+lint: ## Run the whole gate — every hook, every file
+	pre-commit run --all-files
 
 test: build ## Build, then run the smoke tests
 	./test.sh $(IMAGE):$(VERSION)
@@ -34,6 +36,29 @@ test: build ## Build, then run the smoke tests
 test-db: build-db ## ...and prove the -db variant scans with the network off
 	./test.sh $(IMAGE):$(VERSION)-db
 	./test-offline.sh $(IMAGE):$(VERSION)-db
+
+setup: ## Install the pre-commit hook
+	pre-commit install
+
+install: ## Pull the published image onto this machine
+	docker pull $(IMAGE):$(VERSION)
+
+run: build ## Run the image (ARGS is the command, default `scan-image --help`)
+	docker run --rm $(IMAGE):$(VERSION) '$(ARGS)'
+
+format: ## Rewrite what the gate can fix: whitespace, line endings, final newline
+	@# A fixing hook exits 1 when it rewrites a file. That is this target doing
+	@# its job, not failing, so the exits are ignored — make still prints what
+	@# each hook said.
+	-pre-commit run --all-files trailing-whitespace
+	-pre-commit run --all-files end-of-file-fixer
+	-pre-commit run --all-files mixed-line-ending
+
+analyze: ## Scan the tree the way CI does — vulnerabilities, misconfig, secrets
+	@command -v trivy >/dev/null 2>&1 || { \
+		echo "analyze needs trivy: https://trivy.dev/latest/getting-started/installation/" >&2; \
+		exit 69; }
+	trivy fs --scanners vuln,misconfig,secret --severity CRITICAL,HIGH .
 
 push: build ## Push the tagged image
 	docker push $(IMAGE):$(VERSION)
