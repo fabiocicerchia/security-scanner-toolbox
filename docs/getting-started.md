@@ -134,7 +134,7 @@ docker run --rm --network none \
   'cat /opt/scanner-db/VERSIONS'
 ```
 
-```
+```text
 image_built=2026-09-01T03:20:11Z
 trivy=0.73.0
 grype=0.95.0

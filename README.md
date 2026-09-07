@@ -25,9 +25,9 @@ docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0-db   # databas
 
 ### Two tags
 
-| Tag | Databases | For |
-| --- | --- | --- |
-| `:1.0.0`, `:latest` | fetched at scan time | ordinary CI with a network |
+| Tag                       | Databases                  | For                                    |
+| ------------------------- | -------------------------- | -------------------------------------- |
+| `:1.0.0`, `:latest`       | fetched at scan time       | ordinary CI with a network             |
 | `:1.0.0-db`, `:latest-db` | baked in, refreshed weekly | air-gapped, or cold-start-sensitive CI |
 
 The `-db` image is built **from the published base image by digest**, so it is

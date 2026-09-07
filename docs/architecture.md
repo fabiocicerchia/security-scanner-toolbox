@@ -3,7 +3,7 @@
 A two-stage build that downloads four pinned release binaries, and one script
 that runs them in an order that means something.
 
-```
+```text
 stage `fetch`:  curl trivy, grype, syft, cosign at $*_VERSION  (from versions file)
         │
 final:  alpine + bash + git + ca-certificates + the four binaries
@@ -100,9 +100,9 @@ image needs neither.
 
 1. A version variable in the versions file, an `ARG` with a matching default,
    and a fetch step in the `fetch` stage.
-2. Copy it into the final stage.
-3. A line in `test.sh` asserting it responds — the smoke test is what stops a
+1. Copy it into the final stage.
+1. A line in `test.sh` asserting it responds — the smoke test is what stops a
    fetch step that silently produced a zero-byte file.
-4. Decide whether it belongs in `scan-image` at all. Most things do not: the
+1. Decide whether it belongs in `scan-image` at all. Most things do not: the
    script is a gate, and every tool added to it is another way for the gate to
    fail for a reason nobody wants to debug at merge time.
