@@ -1,5 +1,5 @@
 IMAGE     ?= ghcr.io/fabiocicerchia/security-scanner-toolbox
-VERSION   ?= 1.0.0
+VERSION   ?= $(shell cat version.txt)
 PLATFORMS ?= linux/amd64,linux/arm64
 # Stamped into the -db image. It is the only thing that distinguishes two builds
 # of the same tag from each other, since the tool pins are identical by design.
