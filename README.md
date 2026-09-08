@@ -18,17 +18,17 @@ than no scanners, so the database-bundled tags are rebuilt every Monday.
 ## Install
 
 ```sh
-make build                       # builds ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0 locally
-docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0
-docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0-db   # databases baked in
+make build                       # builds the image locally, tagged from version.txt
+docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:latest      # or pin a release: :1.1.1
+docker pull ghcr.io/fabiocicerchia/security-scanner-toolbox:latest-db   # databases baked in
 ```
 
 ### Two tags
 
 | Tag                       | Databases                  | For                                    |
 | ------------------------- | -------------------------- | -------------------------------------- |
-| `:1.0.0`, `:latest`       | fetched at scan time       | ordinary CI with a network             |
-| `:1.0.0-db`, `:latest-db` | baked in, refreshed weekly | air-gapped, or cold-start-sensitive CI |
+| `:X.Y.Z`, `:latest`       | fetched at scan time       | ordinary CI with a network             |
+| `:X.Y.Z-db`, `:latest-db` | baked in, refreshed weekly | air-gapped, or cold-start-sensitive CI |
 
 The `-db` image is built **from the published base image by digest**, so it is
 that exact release plus data — the tools cannot drift between the two. It scans
@@ -79,7 +79,7 @@ docker run --rm ghcr.io/fabiocicerchia/security-scanner-toolbox 'cosign sign-blo
 GitHub Actions:
 
 ```yaml
-container: ghcr.io/fabiocicerchia/security-scanner-toolbox:1.0.0
+container: ghcr.io/fabiocicerchia/security-scanner-toolbox:1.1.1
 steps:
   - run: scan-image ${{ env.IMAGE }} --fail-on critical
 ```
