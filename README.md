@@ -103,7 +103,7 @@ verbs, so you do not have to read a Makefile to find out how to build or test it
 | `build`   | Build the image locally                                 |
 | `test`    | Build, then run the smoke tests                         |
 | `lint`    | `pre-commit run --all-files` — the whole gate           |
-| `run`     | Run the image; `ARGS` is the command |
+| `run`     | Run the image; `ARGS` is the command                    |
 | `format`  | Rewrite what the gate can fix: whitespace, endings, EOF |
 | `analyze` | `trivy fs` — the same scan CI runs                      |
 
@@ -112,7 +112,6 @@ normally runs them.
 
 `make build-db` / `make test-db` / `make release-db` do the same for the
 variant with the vulnerability databases baked in.
-
 
 ## Documentation
 
