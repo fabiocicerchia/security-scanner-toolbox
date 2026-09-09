@@ -28,6 +28,7 @@ permissions:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}
+  DOCKERHUB_IMAGE: docker.io/${{ github.repository }}
 
 jobs:
   refresh:
@@ -48,6 +49,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f  # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Resolve the tag to a digest and build against that. A tag could move
       # between this step and the build; a digest cannot, so the -db image is
@@ -107,7 +114,9 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE }}:${{ steps.base.outputs.version }}-db
+            ${{ env.DOCKERHUB_IMAGE }}:${{ steps.base.outputs.version }}-db
             ${{ env.IMAGE }}:latest-db
+            ${{ env.DOCKERHUB_IMAGE }}:latest-db
           build-args: |
             BASE_IMAGE=${{ steps.base.outputs.ref }}
             BUILD_DATE=${{ steps.base.outputs.built }}
@@ -122,6 +131,7 @@ jobs:
         run: |
           set -euo pipefail
           cosign sign --yes "${IMAGE}@${DIGEST}"
+          cosign sign --yes "${DOCKERHUB_IMAGE}@${DIGEST}"
           cosign verify \
             --certificate-identity-regexp "^https://github.com/${GITHUB_REPOSITORY}/\.github/workflows/" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \

@@ -36,6 +36,7 @@ env:
   # org.opencontainers.image.source in the Dockerfile — check that label is
   # this repo before the first release, or the package attaches elsewhere.
   IMAGE: ghcr.io/${{ github.repository }}
+  DOCKERHUB_IMAGE: docker.io/${{ github.repository }}
 
 jobs:
   publish:
@@ -62,6 +63,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f  # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Compute version (strip leading v)
         id: ver
@@ -113,7 +120,9 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE }}:${{ steps.ver.outputs.version }}
+            ${{ env.DOCKERHUB_IMAGE }}:${{ steps.ver.outputs.version }}
             ${{ env.IMAGE }}:latest
+            ${{ env.DOCKERHUB_IMAGE }}:latest
           build-args: ${{ steps.pins.outputs.args }}
           # In-toto SLSA provenance for the build itself, max mode so the
           # materials and the build command are in it rather than just the
@@ -133,6 +142,7 @@ jobs:
           # By digest, never by tag: a tag is mutable, so a signature attached
           # to one says nothing about the bytes a later puller receives.
           cosign sign --yes "${IMAGE}@${DIGEST}"
+          cosign sign --yes "${DOCKERHUB_IMAGE}@${DIGEST}"
 
       - name: Attach SLSA build provenance
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4.2.2
@@ -172,7 +182,9 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE }}:${{ steps.ver.outputs.version }}-db
+            ${{ env.DOCKERHUB_IMAGE }}:${{ steps.ver.outputs.version }}-db
             ${{ env.IMAGE }}:latest-db
+            ${{ env.DOCKERHUB_IMAGE }}:latest-db
           build-args: |
             BASE_IMAGE=${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
             BUILD_DATE=${{ steps.ver.outputs.built }}
@@ -182,4 +194,6 @@ jobs:
       - name: Sign the -db digest
         env:
           DIGEST: ${{ steps.build_db.outputs.digest }}
-        run: cosign sign --yes "${IMAGE}@${DIGEST}"
+        run: |
+          cosign sign --yes "${IMAGE}@${DIGEST}"
+          cosign sign --yes "${DOCKERHUB_IMAGE}@${DIGEST}"
