@@ -1,0 +1,64 @@
+.TH SCAN\-IMAGE 1 "2026-09" "security-scanner-toolbox" "User Commands"
+.SH NAME
+scan-image \- scan a container image with syft, grype, trivy and cosign
+.SH SYNOPSIS
+.B scan-image
+.I IMAGE
+.RB [ \-\-fail\-on
+.IR SEVERITY ]
+.RB [ \-\-sbom
+.IR FILE ]
+.RB [ \-\-verify\-key
+.IR KEY ]
+.SH DESCRIPTION
+An opinionated pipeline over four tools that are usually run separately:
+an optional cosign signature check, a syft SBOM, then grype and trivy
+scans of that image.
+.PP
+grype is run against the generated SBOM rather than the image, so the
+image is only unpacked once.
+.SH OPTIONS
+.TP
+.BI \-\-fail\-on " SEVERITY"
+Severity at which the scan fails the build (default
+.BR critical ).
+trivy is additionally run at that severity and HIGH.
+.TP
+.BI \-\-sbom " FILE"
+Write the CycloneDX SBOM here and keep it. Without this it goes to a
+temporary file and is discarded.
+.TP
+.BI \-\-verify\-key " KEY"
+Verify the image's cosign signature with this public key before scanning
+anything. Without it, no signature check is made.
+.TP
+.BR \-h ", " \-\-help
+Print the built-in help.
+.SH EXIT STATUS
+.TP
+.B 0
+Nothing at or above the fail threshold.
+.TP
+.B 1
+A finding at or above the threshold, or a failed signature check.
+.TP
+.B 64
+Usage error: no image given, or an unknown flag.
+.SH EXAMPLES
+.PP
+Scan an image and keep the SBOM:
+.PP
+.RS
+.B scan-image ghcr.io/acme/api:1.4.0 \-\-sbom sbom.json
+.RE
+.PP
+Require a valid signature first:
+.PP
+.RS
+.B scan-image ghcr.io/acme/api:1.4.0 \-\-verify\-key cosign.pub
+.RE
+.SH SEE ALSO
+.BR verify-download (1).
+Project documentation:
+.UR https://github.com/fabiocicerchia/security-scanner-toolbox
+.UE
