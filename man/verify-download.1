@@ -1,0 +1,41 @@
+.TH VERIFY\-DOWNLOAD 1 "2026-09" "security-scanner-toolbox" "User Commands"
+.SH NAME
+verify-download \- verify a downloaded release artifact against a pinned checksums file
+.SH SYNOPSIS
+.B verify-download
+.I ARTIFACT
+.I CHECKSUMS_FILE
+.I EXPECTED_CHECKSUMS_SHA256
+.SH DESCRIPTION
+Verifies a downloaded release artifact in two steps, both failing closed.
+.PP
+First the release's checksums file must match the SHA-256 pinned in the
+build arguments \(em otherwise the file itself is just another unverified
+download. Then the artifact must match its own line in that file.
+.PP
+Pinning the checksums file rather than each per-architecture binary keeps
+one constant per tool while still covering every architecture.
+.PP
+A missing line fails the build rather than succeeding vacuously: awk exits
+non-zero when the artifact has no entry, which stops sha256sum being handed
+an empty stream, which busybox treats as success.
+.SH EXIT STATUS
+.TP
+.B 0
+Both checks passed.
+.TP
+.B non-zero
+Either check failed, or the artifact has no line in the
+checksums file.
+.SH EXAMPLES
+.PP
+Verify a downloaded binary inside a Dockerfile build stage:
+.PP
+.RS
+.B verify-download kubectl sha256sums.txt "$CHECKSUMS_SHA256"
+.RE
+.SH SEE ALSO
+.BR sha256sum (1),
+.BR scan-image (1).
+Project documentation:
+https://github.com/fabiocicerchia/security-scanner-toolbox

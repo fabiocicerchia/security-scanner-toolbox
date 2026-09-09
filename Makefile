@@ -10,7 +10,7 @@ BUILD_ARGS = $(shell sed -n 's/^\([A-Z_]*\)=\(.*\)/--build-arg \1=\2/p' versions
 # FC-GEN-057: the same eight verbs in every repo, each either wired or a
 # declared no-op that says why. None of them exit 0 quietly.
 
-.PHONY: help setup install build test lint run format analyze push release
+.PHONY: help setup install uninstall build test lint run format analyze push release
 
 .DEFAULT_GOAL := help
 
@@ -40,8 +40,16 @@ test-db: build-db ## ...and prove the -db variant scans with the network off
 setup: ## Install the pre-commit hook
 	pre-commit install
 
-install: ## Pull the published image onto this machine
-	docker pull $(IMAGE):$(VERSION)
+install: ## Install the tools and their man pages (DESTDIR/PREFIX honoured)
+	install -d "$(DESTDIR)$(PREFIX)/bin" "$(DESTDIR)$(PREFIX)/share/man/man1"
+	install -m 0755 scan-image "$(DESTDIR)$(PREFIX)/bin/scan-image"
+	install -m 0644 man/scan-image.1 "$(DESTDIR)$(PREFIX)/share/man/man1/scan-image.1"
+	install -m 0755 verify-download "$(DESTDIR)$(PREFIX)/bin/verify-download"
+	install -m 0644 man/verify-download.1 "$(DESTDIR)$(PREFIX)/share/man/man1/verify-download.1"
+	@echo "installed scan-image verify-download into $(DESTDIR)$(PREFIX)/bin"
+
+uninstall: ## Remove what `make install` put down
+	rm -f "$(DESTDIR)$(PREFIX)/bin/scan-image" "$(DESTDIR)$(PREFIX)/share/man/man1/scan-image.1" "$(DESTDIR)$(PREFIX)/bin/verify-download" "$(DESTDIR)$(PREFIX)/share/man/man1/verify-download.1"
 
 run: build ## Run the image (ARGS is the command, default `scan-image --help`)
 	docker run --rm $(IMAGE):$(VERSION) '$(ARGS)'
