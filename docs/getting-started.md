@@ -95,7 +95,7 @@ cosign verify \
 And the provenance — what built it, from which commit:
 
 ```sh
-cosign verify-attestation --type slsaprovenance \
+cosign verify-attestation --type slsaprovenance1 \
   --certificate-identity-regexp \
     '^https://github.com/fabiocicerchia/security-scanner-toolbox/\.github/workflows/' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
