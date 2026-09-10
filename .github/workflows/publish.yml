@@ -165,8 +165,12 @@ jobs:
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
             "${IMAGE}@${DIGEST}" > /dev/null
           echo "signature OK"
+          # slsaprovenance1, not slsaprovenance: the bare alias resolves to the
+          # v0.2 predicate, while attest-build-provenance emits v1. Asking for
+          # the wrong one fails with "none of the attestations matched the
+          # predicate type" even though the attestation is present and valid.
           cosign verify-attestation \
-            --type slsaprovenance \
+            --type slsaprovenance1 \
             --certificate-identity-regexp "^https://github.com/${GITHUB_REPOSITORY}/\\.github/workflows/" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
             "${IMAGE}@${DIGEST}" > /dev/null
