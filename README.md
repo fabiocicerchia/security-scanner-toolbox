@@ -15,6 +15,29 @@ SBOM → scan → verify pipeline.
 The commitment of this image is *cadence*: scanners with stale DBs are worse
 than no scanners, so the database-bundled tags are rebuilt every Monday.
 
+## Features
+
+- **trivy + grype + syft + cosign** in one pinned, multi-arch image: the whole
+  supply-chain step of a pipeline without four installs, four caches and four
+  version drifts.
+- `scan-image` is an opinionated one-command pipeline — SBOM with syft, scan
+  with grype, cross-check with trivy, optionally verify the signature first.
+- **Cadence is the commitment**: scanners with stale databases are worse than
+  no scanners, so the database-bundled tags are rebuilt every Monday.
+- Two tag families: databases fetched at scan time for ordinary CI, or baked
+  in (`-db`) for air-gapped and cold-start-sensitive runs.
+- The `-db` image is built **from the published base by digest**, so it is that
+  exact release plus data — the tools cannot drift between the two.
+- Offline scanning is proved, not assumed: CI scans with `--network none` on
+  every rebuild and **requires real CVEs to come back**, because an image that
+  scanned clean offline is exactly the silent failure the tag exists to
+  prevent.
+- Signs its own artifacts with the cosign it ships — every tag keylessly
+  signed, with SLSA build provenance.
+- Usable as a plain toolbox too: the entrypoint is `bash -c`, so any of the
+  four tools runs directly, and the image drops into a GitHub Actions
+  `container:`.
+
 ## Install
 
 ```sh
