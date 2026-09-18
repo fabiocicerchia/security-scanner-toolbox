@@ -1,0 +1,23 @@
+# Backstage catalog entry, read by paved's scorecard plugin.
+#
+# Every check paved scores is derived from this file alone — no cluster
+# access, no CI credentials. What is absent here is absent from the score.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: security-scanner-toolbox
+  description: >-
+      trivy + grype + syft + cosign, pinned and multi-arch, in one image — the entire supply-chain step of
+      a CI pipeline without four separate installs, four caches, and four version drifts.
+  annotations:
+    github.com/project-slug: fabiocicerchia/security-scanner-toolbox
+    backstage.io/source-location: url:https://github.com/fabiocicerchia/security-scanner-toolbox/
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: https://github.com/fabiocicerchia/security-scanner-toolbox
+      title: Source
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/kodebeat
+  system: oss-tools
