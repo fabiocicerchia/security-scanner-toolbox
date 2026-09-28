@@ -51,6 +51,10 @@ jobs:
       # for itself. Signing happens in the called workflow, so cosign's OIDC
       # scope has to be granted here or the release path pushes unsigned.
       id-token: write
+      # Same cap: publish.yml's jobs ask for attestations: write, and a callee
+      # asking for more than this block grants is not run at all — the whole
+      # workflow is a startup_failure, release-please included, on every push.
+      attestations: write
     uses: ./.github/workflows/publish.yml
     with:
       tag: ${{ needs.release-please.outputs.tag_name }}
