@@ -5,6 +5,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       # Everything else rides in one pull request rather than one each.
       actions:
@@ -15,6 +17,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
 
   # The scanner versions themselves are build args in the pinned-versions file,
   # which dependabot cannot parse. Bumping them is the scheduled-rebuild job's
