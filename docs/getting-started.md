@@ -137,7 +137,7 @@ docker run --rm --network none \
 ```text
 image_built=2026-09-01T03:20:11Z
 trivy=0.73.0
-grype=0.95.0
+grype=0.120.1
 trivy_db=2026-09-01T02:11:44Z
 grype_db=2026-08-31T22:04:00Z
 ```
