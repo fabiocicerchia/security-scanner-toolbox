@@ -134,12 +134,14 @@ docker run --rm --network none \
   'cat /opt/scanner-db/VERSIONS'
 ```
 
+Something like this; the timestamps move with every weekly refresh:
+
 ```text
-image_built=2026-09-01T03:20:11Z
+image_built=2026-10-12T03:20:11Z
 trivy=0.73.0
-grype=0.95.0
-trivy_db=2026-09-01T02:11:44Z
-grype_db=2026-08-31T22:04:00Z
+grype=0.120.1
+trivy_db=2026-10-12T02:11:44Z
+grype_db=2026-10-11T22:04:00Z
 ```
 
 The databases are also the reason this tag is much larger than the base image.

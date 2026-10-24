@@ -21,6 +21,16 @@ on:
         description: Release tag to build.
         required: true
         type: string
+    # A called workflow sees none of the caller's secrets unless they are
+    # passed, and an absent one is an empty string rather than an error: the
+    # v1.2.0 release reached the Docker Hub login with neither and failed
+    # there, before anything was pushed to either registry. Declared required
+    # so a caller that forgets them fails at startup, by name.
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       tag:
