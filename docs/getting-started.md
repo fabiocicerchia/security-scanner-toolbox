@@ -222,6 +222,6 @@ make release   # multi-arch buildx push
 ```
 
 `make build` reads the pinned-versions file and turns each line into a
-`--build-arg`. Building with a plain `docker build` and no build args silently
-uses the Dockerfile's `ARG` defaults instead — which is why the Makefile is the
-supported entry point.
+`--build-arg`. The Dockerfile has no version defaults, so a plain
+`docker build` without those build args stops at the first step and names the
+missing one — which is why the Makefile is the supported entry point.

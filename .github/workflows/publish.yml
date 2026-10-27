@@ -89,9 +89,8 @@ jobs:
           echo "built=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       # The four scanner versions are build args, and the Makefile is what
-      # normally supplies them. A plain `docker build` silently falls back to
-      # the Dockerfile's ARG defaults — publishing an image pinned to
-      # different versions than the repo says it ships.
+      # normally supplies them. The Dockerfile has no defaults, so a build
+      # without them fails at the first step instead of guessing a version.
       - name: Load pinned scanner versions as build args
         id: pins
         run: |
