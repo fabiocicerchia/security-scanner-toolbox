@@ -5,6 +5,13 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.2.0...v1.2.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* **release:** pass Docker Hub secrets to publish.yml and bump grype to 0.120.1 ([#88](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/88)) ([ad690ad](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/ad690ad5a05b8c3151b1629408139c0ee4adb498))
+
 ## [1.2.0](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.1.1...v1.2.0) (2026-10-16)
 
 
