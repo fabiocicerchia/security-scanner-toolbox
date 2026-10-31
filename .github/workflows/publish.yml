@@ -21,6 +21,16 @@ on:
         description: Release tag to build.
         required: true
         type: string
+    # A called workflow sees none of the caller's secrets unless they are
+    # passed, and an absent one is an empty string rather than an error: the
+    # v1.2.0 release reached the Docker Hub login with neither and failed
+    # there, before anything was pushed to either registry. Declared required
+    # so a caller that forgets them fails at startup, by name.
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       tag:
@@ -79,9 +89,8 @@ jobs:
           echo "built=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       # The four scanner versions are build args, and the Makefile is what
-      # normally supplies them. A plain `docker build` silently falls back to
-      # the Dockerfile's ARG defaults — publishing an image pinned to
-      # different versions than the repo says it ships.
+      # normally supplies them. The Dockerfile has no defaults, so a build
+      # without them fails at the first step instead of guessing a version.
       - name: Load pinned scanner versions as build args
         id: pins
         run: |

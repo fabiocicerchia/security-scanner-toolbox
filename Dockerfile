@@ -1,9 +1,12 @@
 # security-scanner-toolbox — trivy + grype + syft + cosign, pinned and
 # multi-arch. One image for the whole scan/attest step in CI.
-ARG TRIVY_VERSION=0.73.0
-ARG GRYPE_VERSION=0.95.0
-ARG SYFT_VERSION=1.28.0
-ARG COSIGN_VERSION=2.5.3
+# No defaults: versions.env is the only place a tool version lives, and the
+# Makefile and publish.yml pass it in as build args. A default here would be a
+# second copy that drifts, and a plain `docker build` would quietly ship it.
+ARG TRIVY_VERSION
+ARG GRYPE_VERSION
+ARG SYFT_VERSION
+ARG COSIGN_VERSION
 # SHA-256 of each release's checksums.txt. Pinning the checksum file rather than
 # per-arch binary digests keeps this to one constant per tool while still
 # covering every architecture: the file is verified against the pin, then the
@@ -11,11 +14,11 @@ ARG COSIGN_VERSION=2.5.3
 #
 # This image exists to verify other people's supply chains, so it cannot fetch
 # its own tools on trust — least of all cosign, which is the thing users run to
-# check everything else. Bump alongside the versions above.
+# check everything else. Bump alongside versions.env.
 # VERSION-BUMP
 ARG TRIVY_CHECKSUMS_SHA256=36890275ffdff13025e9bd9fe039724c6e36bf58e698499856b801f619046fe2
 # VERSION-BUMP
-ARG GRYPE_CHECKSUMS_SHA256=0665f621dd856996232251bc6084657171b2c9438785fa3b75db32595a097c30
+ARG GRYPE_CHECKSUMS_SHA256=c25b6095265b44fd9bbb9dbe76aca8daa394c5f0490793d2b52b16be4f5b71b1
 # VERSION-BUMP
 ARG SYFT_CHECKSUMS_SHA256=4cf5750a220be81408b45ed26b35228b94b353ad176a815ac8e986d0145d87af
 # VERSION-BUMP
@@ -42,7 +45,13 @@ SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 # invocation, so the retry policy sits here once instead of on eight command
 # lines where it would drift. Retries are safe: every artifact is checksum-pinned
 # below, so a repeated fetch still has to match its pin.
-RUN apk add --no-cache curl ca-certificates \
+# Without the build args every download URL is malformed; say which arg is
+# missing before reaching the network rather than after a 404.
+RUN : "${TRIVY_VERSION:?build with make build, or pass versions.env as --build-arg}" \
+      "${GRYPE_VERSION:?build with make build, or pass versions.env as --build-arg}" \
+      "${SYFT_VERSION:?build with make build, or pass versions.env as --build-arg}" \
+      "${COSIGN_VERSION:?build with make build, or pass versions.env as --build-arg}" \
+ && apk add --no-cache curl ca-certificates \
  && printf '%s\n' \
       'retry = 5' \
       'retry-all-errors' \

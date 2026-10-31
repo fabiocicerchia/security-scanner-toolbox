@@ -27,9 +27,10 @@ the next section.
 
 ## The pinned versions are the product, and they are also the risk
 
-The four versions are `ARG`s with defaults in the Dockerfile, overridden by the
+The four versions are `ARG`s without defaults in the Dockerfile, set by the
 build args the Makefile derives from the versions file. That file is the single
-source of truth, and `make build` and `make release` both read it.
+source of truth, and `make build` and `make release` both read it. A build that
+leaves one out stops at the first step of `fetch` and names it.
 
 But a scanner's usefulness is mostly its **database**, not its binary. trivy
 and grype fetch their vulnerability data at runtime, so a six-month-old image
@@ -98,8 +99,8 @@ image needs neither.
 
 ## Adding a tool
 
-1. A version variable in the versions file, an `ARG` with a matching default,
-   and a fetch step in the `fetch` stage.
+1. A version variable in the versions file, an `ARG` with no default, its
+   entry in the `fetch` stage's missing-arg check, and a fetch step.
 1. Copy it into the final stage.
 1. A line in `test.sh` asserting it responds — the smoke test is what stops a
    fetch step that silently produced a zero-byte file.
