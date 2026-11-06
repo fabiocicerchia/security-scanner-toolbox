@@ -46,12 +46,14 @@ jobs:
         env:
           TOKEN: ${{ secrets.BONEYARD_TOKEN }}
           REPORT: ${{ steps.depwatch.outputs.report }}
+          IS_FORK: ${{ github.repository != 'fabiocicerchia/security-scanner-toolbox' }}
         run: |
           set -euo pipefail
           test -s "${REPORT}"
           # Forks running the schedule have no BONEYARD_TOKEN; there is nothing
-          # to post with, so skip rather than fail on a guaranteed 401.
-          if [ -z "${TOKEN}" ]; then
+          # to post with, so skip rather than fail on a guaranteed 401. Upstream
+          # a missing token is a misconfiguration and must fail.
+          if [ -z "${TOKEN}" ] && [ "${IS_FORK}" = true ]; then
             echo "::notice::BONEYARD_TOKEN unavailable; not posting"
             exit 0
           fi

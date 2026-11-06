@@ -42,12 +42,14 @@ jobs:
         env:
           TOKEN: ${{ secrets.BONEYARD_TOKEN }}
           LABEL: PR #${{ github.event.pull_request.number }}
+          NO_SECRETS: ${{ github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
         run: |
           set -euo pipefail
           test -s sbom-diff-result.json
           # Dependabot and fork pull requests get no secrets; there is nothing
-          # to post with, so skip rather than fail on a guaranteed 401.
-          if [ -z "${TOKEN}" ]; then
+          # to post with, so skip rather than fail on a guaranteed 401. Anywhere
+          # else a missing token is a misconfiguration and must fail.
+          if [ -z "${TOKEN}" ] && [ "${NO_SECRETS}" = true ]; then
             echo "::notice::BONEYARD_TOKEN unavailable on this pull request; not posting"
             exit 0
           fi

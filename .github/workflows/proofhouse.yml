@@ -68,6 +68,7 @@ jobs:
       - name: Post to proofhouse
         env:
           TOKEN: ${{ secrets.PROOFHOUSE_TOKEN }}
+          IS_FORK: ${{ github.repository != 'fabiocicerchia/security-scanner-toolbox' }}
         run: |
           set -euo pipefail
           # Newest report without parsing `ls` output, which shellcheck refuses.
@@ -75,8 +76,9 @@ jobs:
                     | sort -rn | head -1 | cut -d' ' -f2-)"
           test -s "${report}"
           # Forks running the schedule have no PROOFHOUSE_TOKEN; there is nothing
-          # to post with, so skip rather than fail on a guaranteed 401.
-          if [ -z "${TOKEN}" ]; then
+          # to post with, so skip rather than fail on a guaranteed 401. Upstream
+          # a missing token is a misconfiguration and must fail.
+          if [ -z "${TOKEN}" ] && [ "${IS_FORK}" = true ]; then
             echo "::notice::PROOFHOUSE_TOKEN unavailable; not posting"
             exit 0
           fi
