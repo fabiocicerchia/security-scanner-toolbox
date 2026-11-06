@@ -12,7 +12,9 @@
 #     last stage, so a `db` stage on the end of Dockerfile would hand anyone
 #     running the plain build command a several-hundred-megabyte image they did
 #     not ask for.
-ARG BASE_IMAGE=ghcr.io/fabiocicerchia/security-scanner-toolbox:latest
+# No default: the Makefile and workflows always pass the exact base tag or
+# digest, and a :latest fallback would build on whatever was pushed last.
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
 # The base image sets this too, but SHELL does not carry across a Dockerfile
@@ -78,5 +80,7 @@ LABEL org.opencontainers.image.title="security-scanner-toolbox (databases bundle
       org.opencontainers.image.created="${BUILD_DATE}" \
       io.github.fabiocicerchia.scanner-db.bundled="true"
 
+# A one-shot CLI, not a service: there is nothing long-running to probe.
+HEALTHCHECK NONE
 USER 10001
 WORKDIR /work
