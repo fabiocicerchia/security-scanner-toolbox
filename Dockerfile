@@ -117,6 +117,8 @@ RUN apk add --no-cache bash ca-certificates git \
 COPY NOTICE /NOTICE
 COPY --from=fetch /usr/local/bin/trivy /usr/local/bin/grype /usr/local/bin/syft /usr/local/bin/cosign /usr/local/bin/
 COPY scan-image /usr/local/bin/scan-image
+# A one-shot CLI, not a service: there is nothing long-running to probe.
+HEALTHCHECK NONE
 USER 10001
 WORKDIR /work
 ENTRYPOINT ["/bin/bash", "-c"]
