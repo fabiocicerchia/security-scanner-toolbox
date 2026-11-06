@@ -52,9 +52,11 @@ jobs:
         with:
           sarif_file: trivy.sarif
 
-  # CodeQL is language-specific. Uncomment and set languages once the repo
-  # has code. Supported: c-cpp, csharp, go, java-kotlin, javascript-typescript,
-  # python, ruby, swift.
+  # CodeQL is language-specific and stays disabled: this repo is shell and a
+  # Dockerfile, neither of which CodeQL analyses, so the job would fail with
+  # "no source code seen" (shellcheck and hadolint cover them via pre-commit).
+  # Uncomment and set languages once the repo gains code in one of: c-cpp,
+  # csharp, go, java-kotlin, javascript-typescript, python, ruby, swift.
   #
   # codeql:
   #   name: codeql
