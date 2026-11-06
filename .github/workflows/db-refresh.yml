@@ -67,15 +67,28 @@ jobs:
           set -euo pipefail
           digest="$(docker buildx imagetools inspect "${IMAGE}:${BASE_TAG}" \
             --format '{{ .Manifest.Digest }}')"
+          # `version` comes from the base tag, not the checkout, so a rebuild
+          # of an older base is not labelled with today's version. `latest`
+          # names no version, so fall back to version.txt — and either way,
+          # prove `<version>` is the same digest before tagging `<version>-db`.
+          if [ "${BASE_TAG}" = latest ]; then
+            version="$(cat version.txt)"
+          else
+            version="${BASE_TAG#v}"
+          fi
+          version_digest="$(docker buildx imagetools inspect "${IMAGE}:${version}" \
+            --format '{{ .Manifest.Digest }}')"
+          if [ "${version_digest}" != "${digest}" ]; then
+            echo "::error::${IMAGE}:${BASE_TAG} is not ${IMAGE}:${version}; refusing to tag ${version}-db"
+            exit 1
+          fi
           # One redirect for the group rather than four: the file is appended
           # to by every step, so a partial write on a failure mid-block is the
-          # failure mode worth avoiding. `version` is read from the base image
-          # rather than from the checkout, so a rebuild of an older base does
-          # not get labelled with today's version.
+          # failure mode worth avoiding.
           {
             echo "ref=${IMAGE}@${digest}"
             echo "built=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "version=$(cat version.txt)"
+            echo "version=${version}"
           } >> "$GITHUB_OUTPUT"
           echo "building on ${IMAGE}@${digest}"
 
@@ -112,11 +125,13 @@ jobs:
           file: Dockerfile.db
           platforms: linux/amd64,linux/arm64
           push: true
+          # latest-db only follows a `latest` base; an older base must not
+          # overwrite it. Empty lines are dropped from the tag list.
           tags: |
             ${{ env.IMAGE }}:${{ steps.base.outputs.version }}-db
             ${{ env.DOCKERHUB_IMAGE }}:${{ steps.base.outputs.version }}-db
-            ${{ env.IMAGE }}:latest-db
-            ${{ env.DOCKERHUB_IMAGE }}:latest-db
+            ${{ (inputs.base_tag || 'latest') == 'latest' && format('{0}:latest-db', env.IMAGE) || '' }}
+            ${{ (inputs.base_tag || 'latest') == 'latest' && format('{0}:latest-db', env.DOCKERHUB_IMAGE) || '' }}
           build-args: |
             BASE_IMAGE=${{ steps.base.outputs.ref }}
             BUILD_DATE=${{ steps.base.outputs.built }}
