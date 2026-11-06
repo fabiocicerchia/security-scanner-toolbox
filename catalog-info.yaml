@@ -7,8 +7,9 @@ kind: Component
 metadata:
   name: security-scanner-toolbox
   description: >-
-      trivy + grype + syft + cosign, pinned and multi-arch, in one image — the entire supply-chain step of
-      a CI pipeline without four separate installs, four caches, and four version drifts.
+      trivy + grype + syft + cosign, pinned and multi-arch, in one image — the
+      entire supply-chain step of a CI pipeline without four separate installs,
+      four caches, and four version drifts.
   annotations:
     github.com/project-slug: fabiocicerchia/security-scanner-toolbox
     backstage.io/source-location: url:https://github.com/fabiocicerchia/security-scanner-toolbox/
