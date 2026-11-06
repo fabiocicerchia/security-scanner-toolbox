@@ -18,7 +18,7 @@ jobs:
     # between runs is not a gate.
     container: fabiocicerchia/security-scanner-toolbox:0.1.0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       # Scanning from a registry needs no Docker socket. If you build locally
       # instead, push first and scan the pushed tag — mounting the socket into
@@ -30,7 +30,7 @@ jobs:
           IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
       # `always()` matters: the SBOM is most useful on the run that failed.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:
           name: sbom
