@@ -16,6 +16,6 @@ Feature: Verifying downloaded tools before they ship
     Examples:
       | tool   | condition                                                                 | message                                                                                  |
       | cosign | the release checksums file differs from its pinned SHA-256                | verify-download: sums.txt does not match its pinned SHA-256                              |
-      | grype  | the downloaded archive is not listed in the checksums file                | verify-download: grype_<version>_linux_amd64.tar.gz failed verification against sums.txt |
+      | grype  | the downloaded archive's hash differs from its line in the checksums file | verify-download: grype_<version>_linux_amd64.tar.gz failed verification against sums.txt |
       | syft   | the downloaded archive's hash differs from its line in the checksums file | verify-download: syft_<version>_linux_amd64.tar.gz failed verification against sums.txt  |
       | trivy  | the downloaded archive is empty                                           | verify-download: trivy_<version>_Linux-64bit.tar.gz is missing or empty                  |

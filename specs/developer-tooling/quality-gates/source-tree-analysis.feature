@@ -7,7 +7,7 @@ Feature: Scanning the source tree like CI
     Given trivy is not installed on the contributor's machine
     When the contributor runs make analyze
     Then the contributor sees "analyze needs trivy: https://trivy.dev/latest/getting-started/installation/" on standard error
-    And make analyze fails with exit status 69
+    And make analyze fails, reporting "Error 69" for the recipe
     And no scan is performed
 
   @id:developer-tooling.quality-gates.002 @rule:developer-tooling.quality-gates.analyze-reports-high-and-critical @inferred @source:Makefile#analyze

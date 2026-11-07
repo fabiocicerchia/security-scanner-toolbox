@@ -7,7 +7,7 @@ Feature: Refusing to build without pinned tool versions
     Given the build is given no value for <version_arg>
     When the maintainer builds the image
     Then the build fails before downloading any tool
-    And the error names <version_arg> and tells the maintainer to build with make build or pass the pinned versions file as build args
+    And the error names <version_arg> and says "build with make build, or pass versions.env as --build-arg"
 
     Examples:
       | version_arg    |

@@ -9,7 +9,7 @@ Feature: Docs site brand colours across light and dark schemes
   Scenario: The docs use the security orange-red accent pair
     Given the project belongs to the security / supply chain cluster
     When a reader opens any documentation page
-    Then the header and navigation chrome use the red accent #ef4444
+    Then the theme's primary colour is the red accent #ef4444
     And interactive accents use the orange accent #fb923c
     And primary buttons and the home title blend orange into red
 

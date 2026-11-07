@@ -31,6 +31,7 @@ Feature: Verifying downloaded release artifacts
   Scenario: An artifact with no line in the checksums file is not refused
     Given the checksums file matches its pinned SHA-256
     And the checksums file has no line for the artifact's name
+    And sha256sum is the busybox one, as in the image build
     When the operator runs verify-download on the artifact
     Then the command reports "verify-download: <artifact> verified against <checksums file>"
     And the command exits with status 0
@@ -38,6 +39,6 @@ Feature: Verifying downloaded release artifacts
   @id:build-integrity.download-verification.005 @rule:build-integrity.download-verification.unverified-tool-never-installed @inferred @source:Dockerfile#fetch
   Scenario: A bundled tool that fails verification is never installed into the image
     Given the release download of trivy, grype, syft or cosign fails verification
-    When the operator builds the image
+    When the maintainer builds the image
     Then the build stops at that tool's download step
     And no image is produced

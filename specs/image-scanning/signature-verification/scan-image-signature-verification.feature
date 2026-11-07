@@ -19,5 +19,5 @@ Feature: Verifying the image's signature before scanning
   Scenario: Without a key no signature check is made
     Given "ghcr.io/acme/api:1.4.0" is unsigned
     When the operator runs "scan-image ghcr.io/acme/api:1.4.0"
-    Then no "cosign verify" step is printed
-    And the SBOM and both vulnerability scans run
+    Then no "==> cosign verify" step is printed
+    And the pipeline starts with the SBOM step
