@@ -1,0 +1,786 @@
+{
+ "excluded": {
+  "docs/stylesheets": [
+   {
+    "candidate": "Translucent blurred header, hairline dividers, tab opacity and weight",
+    "covered_by": "",
+    "reason": "INTERNAL_MECHANISM",
+    "source": "docs/stylesheets/extra.css#.md-header"
+   },
+   {
+    "candidate": "Heading weights, letter-spacing and line-height",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#.md-typeset h1"
+   },
+   {
+    "candidate": "Rounded, bordered code blocks",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#.md-typeset .highlight"
+   },
+   {
+    "candidate": "Pill buttons with lift-on-hover (hover shadow is indigo rgba(99,102,241) left over from the default palette)",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#.md-typeset .md-button:hover"
+   },
+   {
+    "candidate": "Home hero gradient title, tagline width and button spacing",
+    "covered_by": "docs.theme.security-palette",
+    "reason": "DUPLICATE_OF",
+    "source": "docs/stylesheets/extra.css#.md-typeset .hero h1"
+   },
+   {
+    "candidate": "Feature cards with border, hover lift and accent-coloured icons",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#.md-typeset .grid.cards > ul > li"
+   },
+   {
+    "candidate": "Bold nav title and active nav link",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#.md-nav__title"
+   },
+   {
+    "candidate": "Footer background, border and muted link colour",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#.md-footer-meta"
+   },
+   {
+    "candidate": "Smooth scrolling for in-page anchors",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "docs/stylesheets/extra.css#html"
+   },
+   {
+    "candidate": "Splash page docs/index.html shares this palette so it cannot drift",
+    "covered_by": "docs.theme.security-palette",
+    "reason": "DUPLICATE_OF",
+    "source": "docs/stylesheets/extra.css#:root"
+   }
+  ],
+  "security-scanner-toolbox/dockerfile": [
+   {
+    "candidate": "Two-stage build: fetch stage with curl, final stage without it",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Dockerfile#fetch"
+   },
+   {
+    "candidate": "Base images pinned to alpine:3.24 by digest",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Dockerfile#FROM"
+   },
+   {
+    "candidate": "curl retry policy written to the root user's curlrc",
+    "covered_by": "",
+    "reason": "INTERNAL_MECHANISM",
+    "source": "Dockerfile#RUN"
+   },
+   {
+    "candidate": "pipefail shell so a failed download cannot pass as an empty tar",
+    "covered_by": "build.downloads.verified-against-pinned-checksums",
+    "reason": "DUPLICATE_OF",
+    "source": "Dockerfile#SHELL"
+   },
+   {
+    "candidate": "Temporary download files removed after extraction",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Dockerfile#RUN"
+   },
+   {
+    "candidate": "HEALTHCHECK NONE: no health check for a one-shot CLI",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "Dockerfile#HEALTHCHECK"
+   },
+   {
+    "candidate": "VERSION-BUMP comments beside the checksum pins",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Dockerfile#ARG TRIVY_CHECKSUMS_SHA256"
+   },
+   {
+    "candidate": "ca-certificates installed so tools can reach registries over TLS",
+    "covered_by": "",
+    "reason": "INTERNAL_MECHANISM",
+    "source": "Dockerfile#RUN"
+   },
+   {
+    "candidate": "hadolint DL3003 suppressions for scoped cd",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Dockerfile#RUN"
+   }
+  ],
+  "security-scanner-toolbox/makefile": [
+   {
+    "candidate": "make build tags the image with version.txt and passes every pinned tool version as a build arg",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Makefile#build"
+   },
+   {
+    "candidate": "make build-db builds the -db variant on the local image with a BUILD_DATE stamp",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Makefile#build-db"
+   },
+   {
+    "candidate": "make test / test-db build then run test.sh and test-offline.sh",
+    "covered_by": "",
+    "reason": "TECH_DEVTOOLING",
+    "source": "Makefile#test"
+   },
+   {
+    "candidate": "make lint runs every pre-commit hook on all files",
+    "covered_by": "",
+    "reason": "TECH_DEVTOOLING",
+    "source": "Makefile#lint"
+   },
+   {
+    "candidate": "make format runs the fixing hooks and ignores their non-zero exits",
+    "covered_by": "",
+    "reason": "TECH_DEVTOOLING",
+    "source": "Makefile#format"
+   },
+   {
+    "candidate": "make setup installs the pre-commit hook",
+    "covered_by": "",
+    "reason": "TECH_DEVTOOLING",
+    "source": "Makefile#setup"
+   },
+   {
+    "candidate": "make push builds then pushes only the versioned tag",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Makefile#push"
+   },
+   {
+    "candidate": "PLATFORMS, IMAGE and VERSION can be overridden on the command line",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "Makefile"
+   }
+  ],
+  "security-scanner-toolbox/scan-image": [
+   {
+    "candidate": "grype scans the syft SBOM rather than the image; trivy scans the image directly",
+    "covered_by": "",
+    "reason": "INTERNAL_MECHANISM",
+    "source": "scan-image"
+   },
+   {
+    "candidate": "When several image arguments are given, the last one silently wins",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "scan-image"
+   },
+   {
+    "candidate": "A known flag given without its value exits 1 on an unbound variable instead of 64",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "scan-image"
+   },
+   {
+    "candidate": "Invalid --fail-on values are rejected by grype/trivy",
+    "covered_by": "",
+    "reason": "UNVERIFIABLE",
+    "source": "scan-image"
+   },
+   {
+    "candidate": "Section banners (==> cosign verify, ==> syft, ==> grype, ==> trivy) in output",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "scan-image"
+   },
+   {
+    "candidate": "--fail-on high gates both scanners on HIGH",
+    "covered_by": "scan-image.gate.fail-at-threshold",
+    "reason": "DUPLICATE_OF",
+    "source": "scan-image"
+   }
+  ],
+  "security-scanner-toolbox/verify-download": [
+   {
+    "candidate": "Pinning the checksums file instead of each per-arch binary (one constant per tool)",
+    "covered_by": "",
+    "reason": "INTERNAL_MECHANISM",
+    "source": "verify-download#verify-download"
+   },
+   {
+    "candidate": "Output of sha256sum -c is suppressed (>/dev/null)",
+    "covered_by": "",
+    "reason": "TRIVIAL",
+    "source": "verify-download#verify-download"
+   },
+   {
+    "candidate": "Installation of verify-download and its man page via make install",
+    "covered_by": "developer-tooling/local-install (owned by the Makefile module)",
+    "reason": "DUPLICATE_OF",
+    "source": "Makefile#install"
+   },
+   {
+    "candidate": "Dockerfile SHELL with pipefail and curl retry policy",
+    "covered_by": "",
+    "reason": "TECH_BUILD",
+    "source": "Dockerfile#fetch"
+   }
+  ]
+ },
+ "lifted": {
+  "docs/stylesheets": [],
+  "security-scanner-toolbox/dockerfile": [
+   {
+    "from_source": "Dockerfile#verify-download",
+    "rule": "build.downloads.verified-against-pinned-checksums"
+   },
+   {
+    "from_source": "Dockerfile#ARG TRIVY_VERSION",
+    "rule": "build.versions.missing-version-refused"
+   }
+  ],
+  "security-scanner-toolbox/makefile": [],
+  "security-scanner-toolbox/scan-image": [],
+  "security-scanner-toolbox/verify-download": [
+   {
+    "from_source": "Dockerfile#fetch",
+    "rule": "build-integrity.download-verification.unverified-tool-never-installed"
+   }
+  ]
+ },
+ "retired": [],
+ "scenarios": {
+  "build-integrity.download-verification.001": {
+   "file": "specs/build-integrity/download-verification/download-verification.feature",
+   "fingerprint": "2580ab4ce948",
+   "human": false,
+   "rule": "build.downloads.verified-against-pinned-checksums",
+   "source": "Dockerfile#verify-download",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "build-integrity.download-verification.002": {
+   "file": "specs/build-integrity/download-verification/verifying-downloaded-tools.feature",
+   "fingerprint": "cb409e4c0654",
+   "human": false,
+   "rule": "build-integrity.download-verification.verified-artifact-passes",
+   "source": "verify-download#verify-download",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "build-integrity.download-verification.003": {
+   "file": "specs/build-integrity/download-verification/verifying-downloaded-tools.feature",
+   "fingerprint": "cb409e4c0654",
+   "human": false,
+   "rule": "build-integrity.download-verification.fails-closed-on-mismatch",
+   "source": "verify-download#verify-download",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "build-integrity.download-verification.004": {
+   "file": "specs/build-integrity/download-verification/verifying-downloaded-tools.feature",
+   "fingerprint": "cb409e4c0654",
+   "human": false,
+   "rule": "build-integrity.download-verification.unlisted-artifact-refused",
+   "source": "verify-download#verify-download",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "build-integrity.download-verification.005": {
+   "file": "specs/build-integrity/download-verification/verifying-downloaded-tools.feature",
+   "fingerprint": "4528de8da507",
+   "human": false,
+   "rule": "build-integrity.download-verification.unverified-tool-never-installed",
+   "source": "Dockerfile#fetch",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "build-integrity.version-pinning.001": {
+   "file": "specs/build-integrity/version-pinning/build-version-args.feature",
+   "fingerprint": "d4d1b723e82d",
+   "human": false,
+   "rule": "build.versions.missing-version-refused",
+   "source": "Dockerfile#ARG TRIVY_VERSION",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.build-and-run.001": {
+   "file": "specs/developer-tooling/build-and-run/run-in-image.feature",
+   "fingerprint": "15766c383ddc",
+   "human": false,
+   "rule": "developer-tooling.build-and-run.run-executes-args-in-built-image",
+   "source": "Makefile#run",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.build-and-run.002": {
+   "file": "specs/developer-tooling/build-and-run/run-in-image.feature",
+   "fingerprint": "15766c383ddc",
+   "human": false,
+   "rule": "developer-tooling.build-and-run.run-without-args-shows-scan-image-help",
+   "source": "Makefile#run",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.help.001": {
+   "file": "specs/developer-tooling/help/make-help.feature",
+   "fingerprint": "7c1202b60854",
+   "human": false,
+   "rule": "developer-tooling.help.bare-make-lists-every-target",
+   "source": "Makefile#help",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.local-install.001": {
+   "file": "specs/developer-tooling/local-install/local-install.feature",
+   "fingerprint": "fb35c21c4ea9",
+   "human": false,
+   "rule": "developer-tooling.local-install.installs-tools-and-man-pages-under-destdir-prefix",
+   "source": "Makefile#install",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.local-install.002": {
+   "file": "specs/developer-tooling/local-install/local-install.feature",
+   "fingerprint": "fb35c21c4ea9",
+   "human": false,
+   "rule": "developer-tooling.local-install.default-prefix-is-filesystem-root",
+   "source": "Makefile#install",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.local-install.003": {
+   "file": "specs/developer-tooling/local-install/local-install.feature",
+   "fingerprint": "40ab7bb9ed8b",
+   "human": false,
+   "rule": "developer-tooling.local-install.uninstall-removes-installed-files",
+   "source": "Makefile#uninstall",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.quality-gates.001": {
+   "file": "specs/developer-tooling/quality-gates/source-tree-analysis.feature",
+   "fingerprint": "eee6cffaed8d",
+   "human": false,
+   "rule": "developer-tooling.quality-gates.analyze-requires-trivy",
+   "source": "Makefile#analyze",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "developer-tooling.quality-gates.002": {
+   "file": "specs/developer-tooling/quality-gates/source-tree-analysis.feature",
+   "fingerprint": "eee6cffaed8d",
+   "human": false,
+   "rule": "developer-tooling.quality-gates.analyze-reports-high-and-critical",
+   "source": "Makefile#analyze",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "documentation-site.page-layout.001": {
+   "file": "specs/documentation-site/page-layout/docs-page-layout.feature",
+   "fingerprint": "721086d36c47",
+   "human": false,
+   "rule": "docs.layout.wide-tables-clipped",
+   "source": "docs/stylesheets/extra.css#.md-typeset table:not([class])",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "documentation-site.page-layout.002": {
+   "file": "specs/documentation-site/page-layout/docs-page-layout.feature",
+   "fingerprint": "c702704e5aae",
+   "human": false,
+   "rule": "docs.layout.no-placeholder-logo",
+   "source": "docs/stylesheets/extra.css#.md-header__button.md-logo",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "documentation-site.theme.001": {
+   "file": "specs/documentation-site/theme/docs-theme.feature",
+   "fingerprint": "ac660254fd34",
+   "human": false,
+   "rule": "docs.theme.security-palette",
+   "source": "docs/stylesheets/extra.css#:root",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "documentation-site.theme.002": {
+   "file": "specs/documentation-site/theme/docs-theme.feature",
+   "fingerprint": "433084a194b6",
+   "human": false,
+   "rule": "docs.theme.links-legible-per-scheme",
+   "source": "docs/stylesheets/extra.css#[data-md-color-scheme=\"slate\"]",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "documentation-site.theme.003": {
+   "file": "specs/documentation-site/theme/docs-theme.feature",
+   "fingerprint": "ac660254fd34",
+   "human": false,
+   "rule": "docs.theme.no-network-fonts",
+   "source": "docs/stylesheets/extra.css#:root",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.command-line.001": {
+   "file": "specs/image-scanning/command-line/scan-image-command-line.feature",
+   "fingerprint": "18e9b737bb3d",
+   "human": false,
+   "rule": "scan-image.cli.help-exits-zero",
+   "source": "scan-image#usage",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.command-line.002": {
+   "file": "specs/image-scanning/command-line/scan-image-command-line.feature",
+   "fingerprint": "18e9b737bb3d",
+   "human": false,
+   "rule": "scan-image.cli.usage-error-exits-64",
+   "source": "scan-image#usage",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.sbom.001": {
+   "file": "specs/image-scanning/sbom/scan-image-sbom.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.sbom.written-to-chosen-path",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.sbom.002": {
+   "file": "specs/image-scanning/sbom/scan-image-sbom.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.sbom.temporary-when-unrequested",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.severity-gate.001": {
+   "file": "specs/image-scanning/severity-gate/scan-image-severity-gate.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.gate.pass-below-threshold",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.severity-gate.002": {
+   "file": "specs/image-scanning/severity-gate/scan-image-severity-gate.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.gate.fail-at-threshold",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.severity-gate.003": {
+   "file": "specs/image-scanning/severity-gate/scan-image-severity-gate.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.gate.trivy-always-gates-high",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.severity-gate.004": {
+   "file": "specs/image-scanning/severity-gate/scan-image-severity-gate.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.gate.trivy-skips-severities-below-high",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.signature-verification.001": {
+   "file": "specs/image-scanning/signature-verification/scan-image-signature-verification.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.signature.refuse-before-scanning",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "image-scanning.signature-verification.002": {
+   "file": "specs/image-scanning/signature-verification/scan-image-signature-verification.feature",
+   "fingerprint": "6960eaed1036",
+   "human": false,
+   "rule": "scan-image.signature.skipped-without-key",
+   "source": "scan-image",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "release.multi-arch-release.001": {
+   "file": "specs/release/multi-arch-release/multi-arch-release.feature",
+   "fingerprint": "42ddbebd66ee",
+   "human": false,
+   "rule": "release.multi-arch-release.pushes-version-and-latest-tags",
+   "source": "Makefile#release",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.bundled-tools.001": {
+   "file": "specs/toolbox-image/bundled-tools/bundled-tools.feature",
+   "fingerprint": "74fee009856d",
+   "human": false,
+   "rule": "toolbox.tools.all-tools-on-path",
+   "source": "Dockerfile#COPY --from=fetch",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.bundled-tools.002": {
+   "file": "specs/toolbox-image/bundled-tools/bundled-tools.feature",
+   "fingerprint": "2d2ebff7d48e",
+   "human": false,
+   "rule": "toolbox.tools.notice-shipped",
+   "source": "Dockerfile#COPY NOTICE",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.image-metadata.001": {
+   "file": "specs/toolbox-image/image-metadata/image-labels.feature",
+   "fingerprint": "f67aa74ed57e",
+   "human": false,
+   "rule": "toolbox.metadata.oci-labels",
+   "source": "Dockerfile#LABEL",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.platforms.001": {
+   "file": "specs/toolbox-image/platforms/multi-arch-tools.feature",
+   "fingerprint": "4528de8da507",
+   "human": false,
+   "rule": "toolbox.platforms.arch-matched-binaries",
+   "source": "Dockerfile#fetch",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.runtime.001": {
+   "file": "specs/toolbox-image/runtime/toolbox-runtime.feature",
+   "fingerprint": "40481f326345",
+   "human": false,
+   "rule": "toolbox.runtime.default-command-shows-scan-help",
+   "source": "Dockerfile#CMD",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.runtime.002": {
+   "file": "specs/toolbox-image/runtime/toolbox-runtime.feature",
+   "fingerprint": "47c7a79c5c56",
+   "human": false,
+   "rule": "toolbox.runtime.argument-is-a-shell-command",
+   "source": "Dockerfile#ENTRYPOINT",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  },
+  "toolbox-image.runtime.003": {
+   "file": "specs/toolbox-image/runtime/toolbox-runtime.feature",
+   "fingerprint": "13c4553f6d0a",
+   "human": false,
+   "rule": "toolbox.runtime.runs-as-non-root",
+   "source": "Dockerfile#USER",
+   "status": "inferred",
+   "test": "",
+   "tests": []
+  }
+ },
+ "taxonomy": {
+  "domains": [
+   {
+    "areas": [
+     {
+      "description": "How a scan is invoked: the image argument, flags, help text and usage errors.",
+      "slug": "command-line",
+      "title": "Command line"
+     },
+     {
+      "description": "Producing a CycloneDX software bill of materials for the image, to a chosen or temporary file.",
+      "slug": "sbom",
+      "title": "SBOM generation"
+     },
+     {
+      "description": "Scanning the SBOM and the image for known vulnerabilities with two independent scanners.",
+      "slug": "vulnerability-scan",
+      "title": "Vulnerability scanning"
+     },
+     {
+      "description": "Failing the scan when findings reach the chosen severity threshold, and reporting pass or fail.",
+      "slug": "severity-gate",
+      "title": "Severity gate"
+     },
+     {
+      "description": "Optionally verifying the image's cosign signature against a public key before scanning.",
+      "slug": "signature-verification",
+      "title": "Signature verification"
+     }
+    ],
+    "description": "The scan-image pipeline that checks a container image's supply chain in one command.",
+    "slug": "image-scanning",
+    "title": "Image Scanning"
+   },
+   {
+    "areas": [
+     {
+      "description": "Which scanning and signing tools are included, with their licences and notices.",
+      "slug": "bundled-tools",
+      "title": "Bundled tools"
+     },
+     {
+      "description": "How the image runs: entrypoint, default command, non-root user, health check and shell utilities.",
+      "slug": "runtime",
+      "title": "Runtime behaviour"
+     },
+     {
+      "description": "Building the image for multiple CPU architectures from one definition.",
+      "slug": "platforms",
+      "title": "Platform support"
+     },
+     {
+      "description": "The -db variant with vulnerability databases baked in so scans work without network access.",
+      "slug": "offline-databases",
+      "title": "Offline databases"
+     },
+     {
+      "description": "Standard labels describing the image's title, source, version and licence.",
+      "slug": "image-metadata",
+      "title": "Image metadata"
+     }
+    ],
+    "description": "The container image that ships trivy, grype, syft and cosign together, ready for CI.",
+    "slug": "toolbox-image",
+    "title": "Toolbox Image"
+   },
+   {
+    "areas": [
+     {
+      "description": "Tool versions and base images fixed by version and digest, with builds refusing to run without them.",
+      "slug": "version-pinning",
+      "title": "Version pinning"
+     },
+     {
+      "description": "Fail-closed checking of every downloaded tool against a pinned checksums file and its own checksum line.",
+      "slug": "download-verification",
+      "title": "Download verification"
+     }
+    ],
+    "description": "Guarantees that the toolbox's own contents are exactly what was pinned and verified.",
+    "slug": "build-integrity",
+    "title": "Build Integrity"
+   },
+   {
+    "areas": [
+     {
+      "description": "Pushing a locally built, tagged image to the registry.",
+      "slug": "publishing",
+      "title": "Publishing"
+     },
+     {
+      "description": "Building and pushing the versioned and latest tags for all platforms, including the -db variant.",
+      "slug": "multi-arch-release",
+      "title": "Multi-arch release"
+     }
+    ],
+    "description": "Publishing the toolbox image to a registry for others to pull.",
+    "slug": "release",
+    "title": "Release & Distribution"
+   },
+   {
+    "areas": [
+     {
+      "description": "Building the image and its -db variant locally and running commands inside it.",
+      "slug": "build-and-run",
+      "title": "Build and run"
+     },
+     {
+      "description": "Smoke tests against the built image, including offline scanning with the -db variant.",
+      "slug": "testing",
+      "title": "Testing"
+     },
+     {
+      "description": "Linting, auto-formatting, pre-commit setup and CI-equivalent security analysis of the source tree.",
+      "slug": "quality-gates",
+      "title": "Quality gates"
+     },
+     {
+      "description": "Installing and uninstalling the tools and man pages on the host, honouring DESTDIR and PREFIX.",
+      "slug": "local-install",
+      "title": "Local installation"
+     },
+     {
+      "description": "Listing every available make target with a one-line description.",
+      "slug": "help",
+      "title": "Command help"
+     }
+    ],
+    "description": "Make targets contributors use to build, test, check and install the toolbox locally.",
+    "slug": "developer-tooling",
+    "title": "Developer Tooling"
+   },
+   {
+    "areas": [
+     {
+      "description": "Brand colours and legibility across light and dark schemes.",
+      "slug": "theme",
+      "title": "Theme and colours"
+     },
+     {
+      "description": "Header, navigation tabs, typography, code blocks and responsive tables.",
+      "slug": "page-layout",
+      "title": "Page layout"
+     },
+     {
+      "description": "The landing hero, call-to-action buttons and feature cards.",
+      "slug": "home-page",
+      "title": "Home page"
+     }
+    ],
+    "description": "The look and feel of the project's published documentation.",
+    "slug": "documentation-site",
+    "title": "Documentation Site"
+   }
+  ]
+ }
+}
