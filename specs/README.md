@@ -6,7 +6,7 @@ Tags: `@verified` a test asserts it · `@inferred` read from the code only · `@
 ## Build Integrity
 Guarantees that the toolbox's own contents are exactly what was pinned and verified.
 
-- **Download verification**: [Verifying downloaded tools before they ship](build-integrity/download-verification/download-verification.feature) (1), [Verifying downloaded release artifacts](build-integrity/download-verification/verifying-downloaded-tools.feature) (4)
+- **Download verification**: [Verifying downloaded tools before they ship](build-integrity/download-verification/download-verification.feature) (1), [Verifying downloaded release artifacts](build-integrity/download-verification/verifying-downloaded-tools.feature) (3)
 - **Version pinning**: [Refusing to build without pinned tool versions](build-integrity/version-pinning/build-version-args.feature) (1)
 
 ## Developer Tooling
@@ -14,14 +14,14 @@ Make targets contributors use to build, test, check and install the toolbox loca
 
 - **Build and run**: [Running a command inside the toolbox image](developer-tooling/build-and-run/run-in-image.feature) (2)
 - **Command help**: [Listing available make commands](developer-tooling/help/make-help.feature) (1)
-- **Local installation**: [Installing the scanner tools on a host](developer-tooling/local-install/local-install.feature) (3)
+- **Local installation**: [Installing the scanner tools on a host](developer-tooling/local-install/local-install.feature) (2)
 - **Quality gates**: [Scanning the source tree like CI](developer-tooling/quality-gates/source-tree-analysis.feature) (2)
 
 ## Documentation Site
 The look and feel of the project's published documentation.
 
 - **Page layout**: [Docs page layout](documentation-site/page-layout/docs-page-layout.feature) (2)
-- **Theme and colours**: [Docs site brand colours across light and dark schemes](documentation-site/theme/docs-theme.feature) (3)
+- **Theme and colours**: [Docs site brand colours across light and dark schemes](documentation-site/theme/docs-theme.feature) (2)
 
 ## Image Scanning
 The scan-image pipeline that checks a container image's supply chain in one command.
@@ -39,7 +39,6 @@ Publishing the toolbox image to a registry for others to pull.
 ## Toolbox Image
 The container image that ships trivy, grype, syft and cosign together, ready for CI.
 
-- **Bundled tools**: [Bundled scanning and signing tools](toolbox-image/bundled-tools/bundled-tools.feature) (2)
-- **Image metadata**: [Image metadata labels](toolbox-image/image-metadata/image-labels.feature) (1)
+- **Bundled tools**: [Bundled scanning and signing tools](toolbox-image/bundled-tools/bundled-tools.feature) (1)
 - **Platform support**: [Native tools for each CPU architecture](toolbox-image/platforms/multi-arch-tools.feature) (1)
 - **Runtime behaviour**: [Running the toolbox image](toolbox-image/runtime/toolbox-runtime.feature) (3)

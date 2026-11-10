@@ -15,14 +15,8 @@ Feature: Installing the scanner tools on a host
       |              | /usr/local   |
       | /tmp/pkgroot | /usr         |
       |              | /opt/toolbox |
-
-  @id:developer-tooling.local-install.002 @rule:developer-tooling.local-install.default-prefix-is-filesystem-root @inferred @source:Makefile#install @questionable
-  Scenario: Installing without a prefix writes into /bin and /share at the filesystem root
-    Given neither DESTDIR nor PREFIX is set
-    When the operator runs make install
-    Then scan-image and verify-download are written to "/bin"
-    And the man pages are written to "/share/man/man1"
-    And the operator sees "installed scan-image verify-download into /bin"
+      # PREFIX has no default, so a bare make install writes into /bin and /share
+      |              |              |
 
   @id:developer-tooling.local-install.003 @rule:developer-tooling.local-install.uninstall-removes-installed-files @inferred @source:Makefile#uninstall
   Scenario: Uninstalling removes exactly the tools and man pages that install put down

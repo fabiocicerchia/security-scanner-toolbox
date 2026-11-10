@@ -35,10 +35,3 @@ Feature: Verifying downloaded release artifacts
     When the operator runs verify-download on the artifact
     Then the command reports "verify-download: <artifact> verified against <checksums file>"
     And the command exits with status 0
-
-  @id:build-integrity.download-verification.005 @rule:build-integrity.download-verification.unverified-tool-never-installed @inferred @source:Dockerfile#fetch
-  Scenario: A bundled tool that fails verification is never installed into the image
-    Given the release download of trivy, grype, syft or cosign fails verification
-    When the maintainer builds the image
-    Then the build stops at that tool's download step
-    And no image is produced

@@ -27,8 +27,8 @@
    },
    {
     "candidate": "Home hero gradient title, tagline width and button spacing",
-    "covered_by": "docs.theme.security-palette",
-    "reason": "DUPLICATE_OF",
+    "covered_by": "",
+    "reason": "TRIVIAL",
     "source": "docs/stylesheets/extra.css#.md-typeset .hero h1"
    },
    {
@@ -57,8 +57,8 @@
    },
    {
     "candidate": "Splash page docs/index.html shares this palette so it cannot drift",
-    "covered_by": "docs.theme.security-palette",
-    "reason": "DUPLICATE_OF",
+    "covered_by": "",
+    "reason": "TRIVIAL",
     "source": "docs/stylesheets/extra.css#:root"
    }
   ],
@@ -247,14 +247,15 @@
   ],
   "security-scanner-toolbox/makefile": [],
   "security-scanner-toolbox/scan-image": [],
-  "security-scanner-toolbox/verify-download": [
-   {
-    "from_source": "Dockerfile#fetch",
-    "rule": "build-integrity.download-verification.unverified-tool-never-installed"
-   }
-  ]
+  "security-scanner-toolbox/verify-download": []
  },
- "retired": [],
+ "retired": [
+  "build-integrity.download-verification.005",
+  "toolbox-image.bundled-tools.002",
+  "documentation-site.theme.001",
+  "toolbox-image.image-metadata.001",
+  "developer-tooling.local-install.002"
+ ],
  "scenarios": {
   "build-integrity.download-verification.001": {
    "file": "specs/build-integrity/download-verification/download-verification.feature",
@@ -292,16 +293,6 @@
    "human": false,
    "rule": "build-integrity.download-verification.unlisted-artifact-refused",
    "source": "verify-download#verify-download",
-   "status": "inferred",
-   "test": "",
-   "tests": []
-  },
-  "build-integrity.download-verification.005": {
-   "file": "specs/build-integrity/download-verification/verifying-downloaded-tools.feature",
-   "fingerprint": "4528de8da507",
-   "human": false,
-   "rule": "build-integrity.download-verification.unverified-tool-never-installed",
-   "source": "Dockerfile#fetch",
    "status": "inferred",
    "test": "",
    "tests": []
@@ -356,16 +347,6 @@
    "test": "",
    "tests": []
   },
-  "developer-tooling.local-install.002": {
-   "file": "specs/developer-tooling/local-install/local-install.feature",
-   "fingerprint": "fb35c21c4ea9",
-   "human": false,
-   "rule": "developer-tooling.local-install.default-prefix-is-filesystem-root",
-   "source": "Makefile#install",
-   "status": "inferred",
-   "test": "",
-   "tests": []
-  },
   "developer-tooling.local-install.003": {
    "file": "specs/developer-tooling/local-install/local-install.feature",
    "fingerprint": "40ab7bb9ed8b",
@@ -412,16 +393,6 @@
    "human": false,
    "rule": "docs.layout.no-placeholder-logo",
    "source": "docs/stylesheets/extra.css#.md-header__button.md-logo",
-   "status": "inferred",
-   "test": "",
-   "tests": []
-  },
-  "documentation-site.theme.001": {
-   "file": "specs/documentation-site/theme/docs-theme.feature",
-   "fingerprint": "ac660254fd34",
-   "human": false,
-   "rule": "docs.theme.security-palette",
-   "source": "docs/stylesheets/extra.css#:root",
    "status": "inferred",
    "test": "",
    "tests": []
@@ -562,26 +533,6 @@
    "human": false,
    "rule": "toolbox.tools.all-tools-on-path",
    "source": "Dockerfile#COPY --from=fetch",
-   "status": "inferred",
-   "test": "",
-   "tests": []
-  },
-  "toolbox-image.bundled-tools.002": {
-   "file": "specs/toolbox-image/bundled-tools/bundled-tools.feature",
-   "fingerprint": "2d2ebff7d48e",
-   "human": false,
-   "rule": "toolbox.tools.notice-shipped",
-   "source": "Dockerfile#COPY NOTICE",
-   "status": "inferred",
-   "test": "",
-   "tests": []
-  },
-  "toolbox-image.image-metadata.001": {
-   "file": "specs/toolbox-image/image-metadata/image-labels.feature",
-   "fingerprint": "f67aa74ed57e",
-   "human": false,
-   "rule": "toolbox.metadata.oci-labels",
-   "source": "Dockerfile#LABEL",
    "status": "inferred",
    "test": "",
    "tests": []

@@ -18,8 +18,3 @@ Feature: Bundled scanning and signing tools
       | cosign     |
       | scan-image |
       | git        |
-
-  @id:toolbox-image.bundled-tools.002 @rule:toolbox.tools.notice-shipped @inferred @source:Dockerfile#COPY NOTICE
-  Scenario: The image carries the third-party licence notice
-    When the operator inspects the image filesystem
-    Then a NOTICE file is present at /NOTICE

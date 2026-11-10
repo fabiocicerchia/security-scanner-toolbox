@@ -5,14 +5,6 @@ Feature: Docs site brand colours across light and dark schemes
   Background:
     Given the documentation site is published with the project's stylesheet
 
-  @id:documentation-site.theme.001 @rule:docs.theme.security-palette @inferred @source:docs/stylesheets/extra.css#:root
-  Scenario: The docs use the security orange-red accent pair
-    Given the project belongs to the security / supply chain cluster
-    When a reader opens any documentation page
-    Then the theme's primary colour is the red accent #ef4444
-    And interactive accents use the orange accent #fb923c
-    And primary buttons and the home title blend orange into red
-
   @id:documentation-site.theme.002 @rule:docs.theme.links-legible-per-scheme @inferred @source:docs/stylesheets/extra.css#[data-md-color-scheme="slate"]
   Scenario Outline: Link colour switches with the colour scheme so links stay readable
     Given the reader has chosen the <scheme> colour scheme
