@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.2.0...v1.2.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* 4 issues found by code-atlas (quality gates) ([#94](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/94)) ([ead301f](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/ead301fe23de4b18e380de770d624027e4d694f5))
+* db-refresh labels -db images with the checkout's version, not the base's ([#92](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/92)) ([0af01e1](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/0af01e1351b9facf475f0afa7fc81533b2351e3d))
+* **release:** pass Docker Hub secrets to publish.yml and bump grype to 0.120.1 ([#88](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/88)) ([ad690ad](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/ad690ad5a05b8c3151b1629408139c0ee4adb498))
+* Upgrade gitpython 3.1.62 → 3.2.1 ([#91](https://github.com/fabiocicerchia/security-scanner-toolbox/issues/91)) ([bd68e0e](https://github.com/fabiocicerchia/security-scanner-toolbox/commit/bd68e0ea39be2808cab5ae8b5c745464fd9b3199))
+
 ## [1.2.0](https://github.com/fabiocicerchia/security-scanner-toolbox/compare/v1.1.1...v1.2.0) (2026-10-16)
 
 
