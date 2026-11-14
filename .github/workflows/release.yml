@@ -35,6 +35,35 @@ jobs:
           # "simple" is language-agnostic (tracks version.txt + CHANGELOG).
           # Swap for node/python/rust/etc. to also bump manifests.
           release-type: simple
+          # The release PR is opened by `release-pr` below, under the PAT. The
+          # release itself stays on GITHUB_TOKEN: a release cut with the PAT
+          # would fire publish.yml's `release` trigger as well as the direct
+          # call in `publish`, and the image would be built and signed twice.
+          skip-github-pull-request: true
+
+  # Phase 2 — open/update the next release PR. The release is not a draft, so
+  # its tag already exists by the time this runs.
+  release-pr:
+    needs: release-please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write # open/update the release PR
+    steps:
+      # Same configuration as phase 1 — the two invocations must agree.
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7  # v5.0.0
+        with:
+          # A release PR opened with GITHUB_TOKEN is authored by
+          # `github-actions[bot]`, which is not a repo collaborator: every
+          # `pull_request` workflow on that branch lands in `action_required`
+          # and waits for a human click, so the release PR never shows a CI
+          # result until someone approves 7 runs by hand. A PAT with
+          # contents+pull-requests write makes the PR author an identity with
+          # write access, and the checks just run. Falls back to GITHUB_TOKEN
+          # so a repo without the secret keeps today's behaviour.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          release-type: simple
+          skip-github-release: true
 
   # Building the image has to hang off this job rather than off the release
   # event: the release release-please publishes carries GITHUB_TOKEN, and
